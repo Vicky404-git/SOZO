@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-from .database import get_connection
+from sozo.core.database import get_connection
 
 
 def check_due_events():

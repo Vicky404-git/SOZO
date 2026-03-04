@@ -1,6 +1,6 @@
 from datetime import datetime
 import dateparser
-from .database import get_connection
+from sozo.core.database import get_connection
 
 
 def parse_datetime(dt: str | None):

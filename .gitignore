@@ -1,5 +1,32 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.env/
+sozoenv/
+
+# Packaging
+sozo.egg-info/
+*.egg-info/
+build/
+dist/
+
+# Databases
+*.sqlite3
+*.db
 data/
-sozo/
-.env
+.sozo/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Sōzō Exports
+# Ignore any exported timelines to keep personal data off GitHub
+*.md
+!README.md
+!MANUAL.md

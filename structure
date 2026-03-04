@@ -1,0 +1,20 @@
+SOZO/
+│
+├ setup.py
+├ requirements.txt
+├ .gitignore
+│
+└ sozo/
+   ├ cli/
+   │   ├ app.py
+   │   ├ commands.py
+   │   └ utils.py
+   │
+   ├ core/
+   │   ├ database.py
+   │   ├ repos.py
+   │   ├ services.py
+   │   ├ kosmo.py
+   │   └ remindr.py
+   │
+   └ main.py

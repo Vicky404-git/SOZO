@@ -1,5 +1,5 @@
 from datetime import datetime
-from .database import get_connection
+from sozo.core.database import get_connection
 
 
 def get_upcoming_events():
