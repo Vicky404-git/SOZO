@@ -1,54 +1,71 @@
-# Sōzō (創造) — User Manual
+# 🌌 Sōzō (創造) — User Manual
 
-Welcome to Sōzō. This is a local-first personal event engine. Sōzō does not track everything automatically; instead, it records your intentional, meaningful actions on a timeline.
+Welcome to Sōzō. This is a local-first personal event engine. Sōzō bridges the gap between a daily logger, an Obsidian knowledge vault, and a Notion command center. 
 
-## Core Concept
-Everything is an Event. An event consists of:
-* **Time:** When it happened.
-* **Category:** The area of your life (e.g., `study`, `programming`, `health`).
-* **Value:** What exactly you did.
-* **Tags:** Keywords to link thoughts together (like Obsidian).
-* **Files:** Links to specific code, notes, or project files.
+## Core Philosophy
+Everything you do is an **Event**. Sōzō doesn't just store files; it records *when* you did something, *why* you did it, and *what* it connects to.
 
 ---
 
-## Command Reference
+## 1. The Command Center
+Turn your terminal into a hacker workspace.
 
-### 1. Adding Events (`add`)
-Record an action in your timeline. If you run this inside a Git repository, Sōzō will automatically detect the project name and tag it!
+* **Open Dashboard:** `sozo dash`
+  *(Splits your terminal into a Notion-style view showing Activity Stats, Today's Actions, and your Recent Timeline feed).*
+* **View Timeline:** `sozo timeline` (or `sozo timeline month`)
+  *(Outputs a beautifully formatted chronological tree of your events grouped by day).*
 
-* **Basic:** `sozo add programming "fixed the database bug"`
-* **With Tags:** `sozo add study "read transformer paper" -t ai -t machine-learning`
-* **With Files:** `sozo add programming "refactored the CLI" -f sozo/cli/commands.py`
-* **In the Past/Future:** `sozo add health "went for a run" --at "yesterday 6pm"`
-* **With Reminder:** `sozo add work "call the client" --at "tomorrow 10am" --remind`
+---
 
-### 2. The Git Integration (`commit` & `git`)
-Sōzō is fully integrated with Git. When you run Git commands through Sōzō, it automatically logs your actions to your timeline.
+## 2. The Knowledge Vault (Obsidian Mode)
+Sōzō features a hidden Markdown vault (`~/.sozo/vault/`) for your deep work, college lectures, and brainstorming.
 
-* **Auto-Commit:** `sozo commit`
-  *(Sōzō will auto-stage your files, generate a placeholder commit message, push the commit, and log the exact changed files to your timeline).*
-* **Custom Commit:** `sozo commit -m "fixed the login API"`
+* **Create a Note:** `sozo note "Deep Learning Lecture" -c study -t aiml`
+  *(Instantly generates a formatted `.md` file in your vault, logs it to your timeline, and opens it in your default text editor).*
+* **AI Note Ingestion:** `sozo ingest raw_notes.txt "Clean AI Notes" -c lecture`
+  *(Takes your messy, unformatted `.txt` dumps and uses Llama 3 to structure them into beautiful Markdown before saving them to the vault).*
+* **The Knowledge Graph:** `sozo graph`
+  *(Scans your vault notes for Obsidian-style `[[wikilinks]]` and draws an ASCII tree of how your thoughts connect).*
+  > **Pro-Tip:** Type `[[Another Idea]]` anywhere inside a Sōzō note to link them together!
+
+---
+
+## 3. Event Linking & Tracking
+Record actions and string them together chronologically.
+
+* **Basic Log:** `sozo add programming "Refactored the core engine"`
+* **With Tags & Files:** `sozo add study "Read transformer paper" -t ai -f paper.pdf`
+* **Bidirectional Linking:** `sozo add programming "Wrote the code for the idea" -r 5`
+  *(Uses `-r` or `--relates-to` to link this new event directly back to Event #5).*
+* **File History:** `sozo file "services.py"`
+  *(See a timeline of every single event where you touched that specific file).*
+
+---
+
+## 4. Git & AI Workflows
+Sōzō is fully aware of your local Git repositories. If you run Sōzō inside a repo, it tags events with the project name automatically.
+
+* **The AI Auto-Committer:** `sozo commit`
+  *(Reads your staged `git diff`, sends it to Groq's Llama 3 API to generate a conventional commit message, commits the code, and logs the changes directly to your Sōzō timeline).*
+* **Manual Commit:** `sozo commit -m "fixed the login API"`
 * **Git Passthrough:** `sozo git push origin main`
-  *(Runs a normal git push, but logs "Git Execute" to Sōzō as an event).*
+  *(Runs a normal git push, but secretly logs "Git Execute" to your timeline).*
 
-### 3. Viewing Your Timeline
+---
+
+## 5. Finding & Managing Data
 * **Today's Events:** `sozo today`
-* **Specific Date:** `sozo show "2026-03-04"` (or `sozo show yesterday`)
-* **All Events:** `sozo list`
+* **All Events:** `sozo list` (or `sozo list "2026-03-05"`)
+* **Search:** `sozo search "vector stores"`
+* **Analytics:** `sozo stats`
+* **Delete Event:** `sozo delete <ID>`
+* **Export Timeline:** `sozo export -t aiml -o my_ai_timeline.md`
 
-### 4. Finding Things (`search` & `stats`)
-* **Search:** `sozo search ai` (Finds any event with "ai" in the category, value, or tags)
-* **Analytics:** `sozo stats` (Shows you which categories you spend the most time on)
-* **Calendar:** `sozo calendar` (Shows how many events you logged per day)
+---
 
-### 5. Exporting (`export`)
-Export your timeline into a clean Markdown file to use in Notion, Obsidian, or GitHub.
+## 6. Reminders Engine (Kosmo)
+Sōzō can run a background watcher to remind you of future events.
 
-* **Export All:** `sozo export` (Generates `timeline.md` in your current folder)
-* **Export by Tag:** `sozo export -t aiml -o my_ai_notes.md`
-
-### 6. Editing & Deleting
-Every event has an ID (visible when you use `list`, `show`, or `today`).
-* **Delete:** `sozo delete 5` (Deletes event ID 5)
-* **Edit:** `sozo edit 5 --category "work" --value "updated meeting notes"`
+* **Set a Reminder:** `sozo add work "Deploy to production" --at "tomorrow 5pm" --remind`
+* **Start the Watcher:** `sozo kosmo`
+  *(Leave this running in a separate terminal tab. It will ping you when it's time).*

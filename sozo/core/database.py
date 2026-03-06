@@ -23,7 +23,7 @@ def initialize_database():
         )
     """)
 
-    # Migrations for Phase 2.5
+    # Migrations for Phase 2.5 & Phase 4
     cursor.execute("PRAGMA table_info(events)")
     columns = [col[1] for col in cursor.fetchall()]
     
@@ -31,6 +31,8 @@ def initialize_database():
         cursor.execute("ALTER TABLE events ADD COLUMN tags TEXT DEFAULT ''")
     if "files" not in columns:
         cursor.execute("ALTER TABLE events ADD COLUMN files TEXT DEFAULT ''")
+    if "relates_to" not in columns:
+        cursor.execute("ALTER TABLE events ADD COLUMN relates_to INTEGER DEFAULT NULL")
 
     conn.commit()
     conn.close()

@@ -8,6 +8,7 @@ venv/
 env/
 .env/
 sozoenv/
+.env
 
 # Packaging
 sozo.egg-info/
@@ -20,6 +21,7 @@ dist/
 *.db
 data/
 .sozo/
+notes.txt
 
 # OS junk
 .DS_Store
@@ -30,3 +32,4 @@ Thumbs.db
 *.md
 !README.md
 !MANUAL.md
+!EXAMPLE.md
