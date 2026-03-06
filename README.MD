@@ -1,58 +1,158 @@
-# 🌌 Sōzō (創造) — Life as Events
+# Sozo — Life as Events
 
 > **A local-first, CLI-based personal event engine. Git for your life activities.**
 
-Most note-taking apps (Notion, Obsidian) are built around *pages* or *graphs*. **Sōzō** is built around **Time and Actions**. Sōzō doesn't just ask you to organize your work; it asks, *"What did you do today?"*
+Track life as events, not notes. Sozo is a system that records meaningful actions and builds a chronological timeline of what you actually did. 
 
-Instead of writing scattered journal entries, Sōzō lets you record meaningful actions in a timeline and connects them to knowledge, projects, and files using tags and Git integration.
+**Not a notes app. Not a task manager. Not a diary.**
+
+Most productivity tools force people to write long notes, organize folders, or manage dashboards. But life doesn't work that way. People don't live in pages and tables. They do things. Sozo records actions instead of documents. Think of it like **Git for your life timeline**.
 
 ---
 
-## 🚀 Features
+## 🚀 The Core Idea
+Everything in Sozo is an **Event**. Over time, these events weave together to form a complete timeline of your work, learning, and projects.
 
-* **⚡ The Timeline Engine:** Every action is recorded as an "Event" (Timestamp, Category, Value).
-* **🧠 Obsidian-Style Tags:** Link thoughts across different categories using `#tags`.
-* **📂 Auto-Project Detection:** If you run Sōzō inside a Git repository, it automatically tags the event with the project name.
-* **🔗 File Linking:** Connect your events directly to the physical files you edited on your hard drive.
-* **🤖 The Auto-Committer:** Run `sozo commit` to instantly analyze your staged files, generate a placeholder commit message, and log the code change directly to your timeline.
-* **🔒 100% Local & Private:** No servers, no accounts. Your data lives purely on your machine as an SQLite database.
-* **📊 Analytics:** See where you spend your time (`sozo stats`).
+* **Timestamp:** `2026-03-05 09:02`
+* **Category:** `programming`
+* **Value:** `implemented the Bidirectional Linking Engine`
+* **Metadata:** `#python`, `#sozo`, `🔗 Linked to #14`
+
+---
+
+## ⚡ Features (The Second Brain Upgrades)
+
+Sozo has evolved from a simple logger into a deeply interconnected knowledge system:
+
+* **The Command Center:** Run `sozo dash` to turn your terminal into a Notion-style split-screen dashboard showing stats, today's actions, and your timeline feed.
+* **The Knowledge Vault:** Use `sozo note` to automatically generate, format, and track Markdown files in a hidden local vault.
+* **AI Auto-Ingestion:** Dump raw, messy `.txt` thoughts into `sozo ingest`, and the Groq AI will instantly format it into clean Markdown and save it to your vault.
+* **Obsidian-Style Graph:** Use `[[wikilinks]]` inside your notes, then run `sozo graph` to render an ASCII tree mapping how all your thoughts connect.
+* **Bidirectional Timeline Linking:** Use the `-r` flag to visually link today's code commit back to a brainstorming note you wrote three weeks ago.
+* **AI Git Auto-Committer:** Run `sozo commit` to have Llama 3 read your staged code, write a conventional commit message, and log the changes to your timeline.
+* **Auto-Context:** Sozo detects your Git repositories and links physical files to your events automatically.
 
 ---
 
 ## 🛠️ Installation
 
-Clone the repository and install it globally using `pip`:
-
-``` bash
+Clone the repository:
+```bash
 git clone [https://github.com/Vicky404-git/SOZO.git](https://github.com/Vicky404-git/SOZO.git)
 cd SOZO
+
+```
+
+Create and activate a virtual environment (Windows):
+
+Bash
+
+```
+python -m venv sozoenv
+sozoenv\Scripts\activate
+
+```
+
+Install the project:
+
+Bash
+
+```
 pip install -e .
+
 ```
-*Note: You can now type sozo from anywhere on your computer!*
 
-## 📖 Quick Start
-### Log an event:
+_Note for AI Features: Create a `.env` file in the root of the `SOZO` folder with `GROQ_API_KEY=your_key_here` to enable `sozo commit` and `sozo ingest`._
 
-``` bash
-sozo add programming "Refactored the database schema" -t python -f core/database.py
+----------
+
+## 📖 Quick Start & Example Workflow
+
+**Open the Terminal Dashboard:**
+
+Bash
+
 ```
-### Auto-Commit your code & log it:
+sozo dash
 
-``` bash
+```
+
+**Log an action linked to a previous idea:**
+
+Bash
+
+```
+sozo add programming "built the graph scanner" -t python -f core/services.py -r 14
+
+```
+
+**Auto-format study notes with AI:**
+
+Bash
+
+```
+sozo ingest raw_lecture.txt "Neural Networks Ch 1" -c study -t aiml
+
+```
+
+**View your Knowledge Graph:**
+
+Bash
+
+```
+sozo graph
+
+```
+
+**Auto-commit your code and log it:**
+
+Bash
+
+```
 sozo commit
-```
-### See what you did today:
-``` bash
-sozo today
-```
-### Find all your AI notes:
-``` bash
-sozo search ai
-```
-*For the complete guide, type sozo --help or sozo manual in your terminal.*
 
-## 🗺️ Roadmap (Phase 3)
-- AI Integration: Replacing the placeholder sozo commit generator with a local LLM that actually reads the git diff and writes human-like commit messages automatically.
+```
 
-- Background Daemon (DaemonV): Merging the reminder engine (kosmo) into a silent, background system process.
+_(For the complete guide, type `sozo --help` or `sozo manual` in your terminal)._
+
+----------
+
+## 🗄️ Database Architecture
+
+Sozo uses a local, private SQLite database. No servers, no accounts.
+
+**Table:** `events`
+
+-   `id` (INTEGER PRIMARY KEY)
+    
+-   `timestamp` (TEXT)
+    
+-   `category` (TEXT)
+    
+-   `value` (TEXT)
+    
+-   `created_at` (TEXT)
+    
+-   `remind` (INTEGER)
+    
+-   `reminded` (INTEGER)
+    
+-   `tags` (TEXT)
+    
+-   `files` (TEXT)
+    
+-   `relates_to` (INTEGER)
+    
+
+----------
+
+## 🗺️ Roadmap
+
+-   **DaemonV Integration:** Moving the `kosmo` reminder engine into a silent, native background service so it doesn't require an open terminal tab.
+    
+-   **Natural Language Processing:** `sozo log studied transformers for 2h` -> auto-parses category, value, and duration.
+    
+
+----------
+
+**Created by Vicky404** [GitHub Profile](https://github.com/Vicky404-git)

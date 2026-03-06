@@ -86,13 +86,14 @@ def remove_event(event_id):
     
 def get_git_diff():
     try:
-        result = subprocess.run(["git", "diff", "--cached"], capture_output=True, text=True)
+        # Added encoding="utf-8" to force Windows to read emojis correctly
+        result = subprocess.run(["git", "diff", "--cached"], capture_output=True, text=True, encoding="utf-8")
         diff = result.stdout.strip()
         if not diff:
             subprocess.run(["git", "add", "."])
-            result = subprocess.run(["git", "diff", "--cached"], capture_output=True, text=True)
+            result = subprocess.run(["git", "diff", "--cached"], capture_output=True, text=True, encoding="utf-8")
             diff = result.stdout.strip()
-        file_result = subprocess.run(["git", "diff", "--cached", "--name-only"], capture_output=True, text=True)
+        file_result = subprocess.run(["git", "diff", "--cached", "--name-only"], capture_output=True, text=True, encoding="utf-8")
         files = [f for f in file_result.stdout.split('\n') if f]
         return diff, files
     except Exception:
@@ -107,10 +108,11 @@ def execute_auto_commit(custom_msg=None):
     if custom_msg:
         commit_msg = custom_msg
     else:
-        truncated_diff = diff[:3000] if len(diff) > 3000 else diff
+        truncated_diff = diff[:30000] if len(diff) > 30000 else diff
         commit_msg = generate_commit_message(truncated_diff)
     
-    process = subprocess.run(["git", "commit", "-m", commit_msg], capture_output=True, text=True)
+    # Added encoding="utf-8" here as well
+    process = subprocess.run(["git", "commit", "-m", commit_msg], capture_output=True, text=True, encoding="utf-8")
     if process.returncode != 0:
         raise RuntimeError(f"Git failed: {process.stderr}")
         
