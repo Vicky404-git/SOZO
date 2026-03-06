@@ -22,6 +22,28 @@ def initialize_database():
             reminded INTEGER DEFAULT 0
         )
     """)
+    
+def fetch_event_by_id(event_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM events WHERE id = ?", (event_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return row
+
+def update_event(event_id, category, value, tags, files):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        UPDATE events 
+        SET category = ?, value = ?, tags = ?, files = ?
+        WHERE id = ?
+        """,
+        (category, value, tags, files, event_id)
+    )
+    conn.commit()
+    conn.close()
 
     # Migrations for Phase 2.5 & Phase 4
     cursor.execute("PRAGMA table_info(events)")

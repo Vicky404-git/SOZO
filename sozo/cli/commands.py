@@ -54,6 +54,24 @@ def register_commands(app: typer.Typer):
 
         except Exception as e:
             print(f"[red]Error:[/red] {e}")
+            
+    # -----------------------------------------------
+    # EDIT EVENT
+    # -----------------------------------------------
+    @app.command()
+    def edit(
+        event_id: int,
+        category: str = typer.Option(None, "--category", "-c"),
+        value: str = typer.Option(None, "--value", "-v"),
+        tags: list[str] = typer.Option(None, "--tag", "-t"),
+        files: list[str] = typer.Option(None, "--file", "-f"),
+    ):
+        from sozo.core.services import edit_event
+        try:
+            edit_event(event_id, category, value, tags, files)
+            print(f"[green]✔ Event {event_id} updated successfully![/green]")
+        except Exception as e:
+            print(f"[red]Error:[/red] {e}")
 
 
     # ------------------------------------------------
@@ -193,12 +211,16 @@ def register_commands(app: typer.Typer):
     # TIMELINE
     # ------------------------------------------------
     @app.command()
-    def timeline(period: str = typer.Argument("week")):
+    def timeline(
+        period: str = typer.Argument("week"),
+        tag: str = typer.Option(None, "--tag", "-t", help="Filter timeline by tag")
+    ):
 
         from sozo.core.services import get_timeline
+        from sozo.cli.utils import display_timeline
 
-        display_timeline(get_timeline(period), f"{period.capitalize()} Timeline")
-
+        title_suffix = f" (#{tag})" if tag else ""
+        display_timeline(get_timeline(period, tag), f"{period.capitalize()} Timeline{title_suffix}")
 
     # ------------------------------------------------
     # NOTE
@@ -281,12 +303,12 @@ def register_commands(app: typer.Typer):
     # DASHBOARD
     # ------------------------------------------------
     @app.command()
-    def dash():
-
-        from sozo.core.services import get_timeline
-
-        stats = get_stats()
-        today = show_today()
-        timeline = get_timeline("week")
-
-        display_dashboard(stats, today, timeline)
+    def graph(export: bool = typer.Option(False, "--export", "-e", help="Export as 2D Mermaid Network Graph")):
+        from sozo.core.services import build_knowledge_graph
+        from sozo.cli.utils import display_graph, export_mermaid_graph
+        
+        graph_data = build_knowledge_graph()
+        if export:
+            export_mermaid_graph(graph_data)
+        else:
+            display_graph(graph_data)

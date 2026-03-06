@@ -153,6 +153,26 @@ def display_graph(graph_data):
             
     console.print(root)
     print()
+    
+def export_mermaid_graph(graph_data, filename="network_graph.md"):
+    if not graph_data:
+        show_empty("No notes to graph.")
+        return
+        
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write("```mermaid\n")
+        f.write("graph TD;\n") # Top-Down Network Graph
+        
+        for note, links in graph_data.items():
+            safe_note = note.replace(" ", "_").replace("-", "_")
+            for link in links:
+                safe_link = link.replace(" ", "_").replace("-", "_")
+                f.write(f"    {safe_note}[{note}] --> {safe_link}[{link}];\n")
+                
+        f.write("```\n")
+        
+    print(f"[green]✔ Network graph exported to {filename}[/green]")
+    print("[dim]Open this file in GitHub, Obsidian, or VSCode to see the 2D visualization.[/dim]")
 
 def display_dashboard(stats, today_events, timeline_grouped):
     layout = Layout()
