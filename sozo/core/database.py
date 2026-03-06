@@ -1,10 +1,8 @@
 import sqlite3
-from pathlib import Path
-
-DB_PATH = Path.home() / ".sozo" / "sozo.db"
+from sozo.core.config import DB_PATH
 
 def get_connection():
-    DB_PATH.parent.mkdir(exist_ok=True)
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     return sqlite3.connect(DB_PATH)
 
 def initialize_database():
@@ -22,30 +20,8 @@ def initialize_database():
             reminded INTEGER DEFAULT 0
         )
     """)
-    
-def fetch_event_by_id(event_id):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM events WHERE id = ?", (event_id,))
-    row = cursor.fetchone()
-    conn.close()
-    return row
 
-def update_event(event_id, category, value, tags, files):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        UPDATE events 
-        SET category = ?, value = ?, tags = ?, files = ?
-        WHERE id = ?
-        """,
-        (category, value, tags, files, event_id)
-    )
-    conn.commit()
-    conn.close()
-
-    # Migrations for Phase 2.5 & Phase 4
+    # Migrations
     cursor.execute("PRAGMA table_info(events)")
     columns = [col[1] for col in cursor.fetchall()]
     
@@ -59,4 +35,3 @@ def update_event(event_id, category, value, tags, files):
     conn.commit()
     conn.close()
 
-initialize_database()

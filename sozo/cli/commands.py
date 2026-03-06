@@ -21,6 +21,7 @@ from sozo.cli.utils import (
     display_graph,
     display_dashboard,
     open_in_editor,
+    console,
 )
 
 app = typer.Typer()
@@ -163,9 +164,9 @@ def register_commands(app: typer.Typer):
         from sozo.core.services import execute_auto_commit
 
         try:
-            print("[dim]Analyzing changes...[/dim]")
-
-            commit_msg, files = execute_auto_commit(msg)
+            # Wrap the AI call in an animated spinner!
+            with console.status("[bold cyan]Analyzing changes and consulting AI...[/bold cyan]", spinner="dots"):
+                commit_msg, files = execute_auto_commit(msg)
 
             print("[green]✔ Committed successfully![/green]")
             print(f"📝 [bold]Message:[/bold] {commit_msg}")
@@ -274,33 +275,19 @@ def register_commands(app: typer.Typer):
         from sozo.core.services import ingest_raw_file
 
         try:
-            print("[dim]Reading file and querying AI...[/dim]")
-
-            filepath, final_tags = ingest_raw_file(txt_file, title, category, tags)
+            # Wrap the AI formatting in an animated spinner!
+            with console.status(f"[bold magenta]Reading {txt_file} and querying AI...[/bold magenta]", spinner="bouncingBar"):
+                filepath, final_tags = ingest_raw_file(txt_file, title, category, tags)
 
             tag_str = f" [cyan]#{', #'.join(final_tags)}[/cyan]" if final_tags else ""
-
             print(f"[green]✔ AI formatting complete:[/green] {title}{tag_str}")
-
             open_in_editor(filepath)
 
         except Exception as e:
             print(f"[red]Failed to ingest file:[/red] {e}")
 
-
     # ------------------------------------------------
     # GRAPH
-    # ------------------------------------------------
-    @app.command()
-    def graph():
-
-        from sozo.core.services import build_knowledge_graph
-
-        display_graph(build_knowledge_graph())
-
-
-    # ------------------------------------------------
-    # DASHBOARD
     # ------------------------------------------------
     @app.command()
     def graph(export: bool = typer.Option(False, "--export", "-e", help="Export as 2D Mermaid Network Graph")):
@@ -312,3 +299,13 @@ def register_commands(app: typer.Typer):
             export_mermaid_graph(graph_data)
         else:
             display_graph(graph_data)
+
+    # ------------------------------------------------
+    # DASHBOARD
+    # ------------------------------------------------
+    @app.command()
+    def dash():
+        from sozo.core.services import get_stats, show_today, get_timeline
+        from sozo.cli.utils import display_dashboard
+        
+        display_dashboard(get_stats(), show_today(), get_timeline("week"))

@@ -1,19 +1,14 @@
-import os
-from pathlib import Path
 from groq import Groq
-from dotenv import load_dotenv
+from sozo.core.config import get_groq_api_key
 
-# Dynamically point to the root of the SOZO project folder
-env_path = Path(__file__).resolve().parent.parent.parent / ".env"
-load_dotenv(env_path)
+def _get_client():
+    api_key = get_groq_api_key()
+    if not api_key:
+        raise ValueError("GROQ_API_KEY is missing. Please add it to your .env file.")
+    return Groq(api_key=api_key)
 
 def format_notes_to_markdown(raw_text: str) -> str:
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        raise ValueError(f"GROQ_API_KEY is missing. Please add it to {env_path}")
-    
-    client = Groq(api_key=api_key)
-
+    client = _get_client()
     prompt = f"""
     You are an expert note-taker. Convert the following raw text into a beautifully formatted Markdown document.
     Follow these rules strictly:
@@ -24,7 +19,6 @@ def format_notes_to_markdown(raw_text: str) -> str:
     Raw Notes:
     {raw_text}
     """
-
     try:
         response = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
@@ -37,12 +31,7 @@ def format_notes_to_markdown(raw_text: str) -> str:
         raise RuntimeError(f"AI Formatting failed: {e}")
     
 def generate_commit_message(diff: str) -> str:
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        raise ValueError(f"GROQ_API_KEY is missing. Please add it to {env_path}")
-    
-    client = Groq(api_key=api_key)
-
+    client = _get_client()
     prompt = f"""
     You are an expert developer. Generate a concise, conventional commit message for the following git diff.
     Follow these rules strictly:
@@ -53,12 +42,11 @@ def generate_commit_message(diff: str) -> str:
     Git Diff:
     {diff}
     """
-
     try:
         response = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
-            model="llama-3.1-8b-instant",  # Fast and free
-            temperature=0.3,         # Low temperature for precise, predictable outputs
+            model="llama-3.1-8b-instant",  
+            temperature=0.3,         
             max_tokens=50,
         )
         return response.choices[0].message.content.strip()

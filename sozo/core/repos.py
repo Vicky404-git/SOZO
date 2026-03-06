@@ -64,15 +64,26 @@ def delete_event(event_id):
     conn.commit()
     conn.close()
     
-def fetch_events_in_range(start_date, end_date):
+def fetch_events_in_range(start_date, end_date, tag=None):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT id, timestamp, category, value, remind, tags, files, relates_to
-        FROM events 
-        WHERE date(timestamp) >= ? AND date(timestamp) <= ? 
-        ORDER BY timestamp ASC
-    """, (start_date, end_date))
+    
+    if tag:
+        tag_query = f"%{tag}%"
+        cursor.execute("""
+            SELECT id, timestamp, category, value, remind, tags, files, relates_to
+            FROM events 
+            WHERE date(timestamp) >= ? AND date(timestamp) <= ? AND tags LIKE ?
+            ORDER BY timestamp ASC
+        """, (start_date, end_date, tag_query))
+    else:
+        cursor.execute("""
+            SELECT id, timestamp, category, value, remind, tags, files, relates_to
+            FROM events 
+            WHERE date(timestamp) >= ? AND date(timestamp) <= ? 
+            ORDER BY timestamp ASC
+        """, (start_date, end_date))
+        
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -94,7 +105,6 @@ def fetch_file_history(filename):
 def fetch_event_by_id(event_id):
     conn = get_connection()
     cursor = conn.cursor()
-    # Grabs all 10 columns (id, timestamp, category, value, created_at, remind, reminded, tags, files, relates_to)
     cursor.execute("SELECT * FROM events WHERE id = ?", (event_id,))
     row = cursor.fetchone()
     conn.close()

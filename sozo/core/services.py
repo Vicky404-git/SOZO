@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
+from sozo.core.config import VAULT_PATH
 
 import dateparser
 
@@ -241,11 +242,10 @@ def get_timeline(period="week", tag=None):
     start_date = (now - timedelta(days=30 if period == "month" else 7)).date().isoformat()
     grouped = defaultdict(list)
     
-    for event in fetch_events_in_range(start_date, now.date().isoformat()):
-        # FIX: Adjusted index to 5 so tags parse correctly
-        if tag and tag not in (event[5] or ""):
-            continue
+    # Pass the tag directly into the SQL fetcher!
+    for event in fetch_events_in_range(start_date, now.date().isoformat(), tag):
         grouped[event[1].split("T")[0]].append(event)
+        
     return grouped
 
 
@@ -259,7 +259,7 @@ def _save_to_vault(title, category, tags, content, action_desc):
     
     # Create subfolders based on the primary tag or project
     subfolder = tags_list[0] if tags_list else "general"
-    vault_path = Path.home() / ".sozo" / "vault" / subfolder
+    vault_path = VAULT_PATH / subfolder
     vault_path.mkdir(parents=True, exist_ok=True)
 
     safe_title = re.sub(r"[^a-zA-Z0-9]+", "-", title.lower()).strip("-")
@@ -305,15 +305,15 @@ def ingest_raw_file(txt_filepath: str, title: str, category: str, tags: list = N
 # --------------------------------------------------
 
 def build_knowledge_graph():
-    vault_path = Path.home() / ".sozo" / "vault"
-    if not vault_path.exists():
+    #vault_path = Path.home() / ".sozo" / "vault"
+    if not VAULT_PATH.exists():
         return {}
 
     graph = {}
     link_pattern = re.compile(r"\[\[(.*?)\]\]")
 
     # FIX: Changed from .glob to .rglob so it scans inside all subfolders!
-    for filepath in vault_path.rglob("*.md"):
+    for filepath in VAULT_PATH.rglob("*.md"):
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 content = f.read()
