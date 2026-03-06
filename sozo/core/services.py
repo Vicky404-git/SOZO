@@ -214,7 +214,7 @@ def execute_auto_commit(custom_msg=None):
         commit_msg = custom_msg
     else:
 
-        truncated_diff = diff[:30000] if len(diff) > 30000 else diff
+        truncated_diff = diff[:10000] if len(diff) > 10000 else diff
         commit_msg = generate_commit_message(truncated_diff)
 
     process = subprocess.run(
