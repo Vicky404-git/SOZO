@@ -48,7 +48,7 @@ def generate_commit_message(diff: str) -> str:
     Follow these rules strictly:
     1. Use conventional format (e.g., feat:, fix:, chore:, refactor:, docs:).
     2. Keep it under 50 characters if possible.
-    3. Output ONLY the commit message. No explanations, no markdown formatting, no quotes, no yapping.
+    3. Output ONLY the commit message. No explanations, no markdown formatting, no quotes, no yapping, in simple words.
 
     Git Diff:
     {diff}
