@@ -63,6 +63,7 @@ def detect_project():
 # --------------------------------------------------
 
 def add_event(category, value, at=None, remind=False, tags=None, files=None, relates_to=None):
+    
     event_time = parse_datetime(at)
     now = datetime.now()
 
@@ -88,6 +89,21 @@ def add_event(category, value, at=None, remind=False, tags=None, files=None, rel
 
     return tags_list
 
+def log_natural_event(text: str):
+    from sozo.core.ai import parse_natural_language_event
+    
+    # 1. Ask the AI to parse the sentence
+    parsed_data = parse_natural_language_event(text)
+    
+    # 2. Extract the pieces (with safe defaults just in case)
+    category = parsed_data.get("category", "log").lower()
+    value = parsed_data.get("value", text)
+    tags = parsed_data.get("tags", [])
+    
+    # 3. Save it to the database!
+    final_tags = add_event(category, value, tags=tags)
+    
+    return category, value, final_tags
 
 def edit_event(event_id, category=None, value=None, tags=None, files=None):
     from sozo.core.repos import fetch_event_by_id, update_event
@@ -250,14 +266,15 @@ def get_timeline(period="week", tag=None):
 
 
 # --------------------------------------------------
-# VAULT HELPERS (DRY)
+# VAULT HELPERS (SECOND BRAIN)
 # --------------------------------------------------
 
 def _save_to_vault(title, category, tags, content, action_desc):
     tags_list = list(tags) if tags else []
-    if detect_project() and detect_project() not in tags_list: tags_list.append(detect_project())
+    project = detect_project()
+    if project and project not in tags_list: 
+        tags_list.append(project)
     
-    # Create subfolders based on the primary tag or project
     subfolder = tags_list[0] if tags_list else "general"
     vault_path = VAULT_PATH / subfolder
     vault_path.mkdir(parents=True, exist_ok=True)
@@ -266,17 +283,54 @@ def _save_to_vault(title, category, tags, content, action_desc):
     filename = f"{datetime.now().strftime('%Y%m%d')}-{safe_title}.md"
     filepath = vault_path / filename
 
-    tags_str = ", ".join([f"#{t}" for t in tags_list]) if tags_list else ""
+    # NEW: Format tags for YAML array (e.g., ["python", "aiml"])
+    yaml_tags = f"[{', '.join([f'\"{t}\"' for t in tags_list])}]" if tags_list else "[]"
+    iso_date = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+    # NEW: Official YAML Frontmatter
+    yaml_frontmatter = f"""---
+title: "{title}"
+date: {iso_date}
+category: {category}
+tags: {yaml_tags}
+---
+
+# {title}
+
+{content}"""
 
     with open(filepath, "w", encoding="utf-8") as f:
-        f.write(f"# {title}\n\n**Date:** {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
-        if tags_str: f.write(f"**Tags:** {tags_str}\n")
-        f.write(f"\n---\n\n{content}")
+        f.write(yaml_frontmatter)
 
     insert_event(datetime.now().isoformat(), category, f"{action_desc}: {title}",
                  datetime.now().isoformat(), 0, ",".join(tags_list), f"vault/{subfolder}/{filename}", None)
     return filepath, tags_list
 
+def search_vault(keyword: str) -> dict:
+    """Full-text deep search of all Markdown files in the vault."""
+    if not VAULT_PATH.exists():
+        return {}
+        
+    results = {}
+    keyword = keyword.lower()
+    
+    for filepath in VAULT_PATH.rglob("*.md"):
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                content = f.read()
+                if keyword in content.lower():
+                    # Extract a snippet around the keyword
+                    lines = content.split('\n')
+                    snippet = ""
+                    for line in lines:
+                        if keyword in line.lower():
+                            snippet = line.strip()
+                            break
+                    results[filepath.name] = snippet
+        except Exception:
+            continue
+            
+    return results
 
 # --------------------------------------------------
 # NOTE CREATION
@@ -323,3 +377,31 @@ def build_knowledge_graph():
             continue
 
     return graph
+
+# --------------------------------------------------
+# CONCEPT ENGINE
+# --------------------------------------------------
+
+def build_concept(keyword: str) -> dict:
+    """Gathers all notes, events, and projects related to a concept."""
+    # 1. Get all database matches
+    events = search_events_in_db(keyword)
+    
+    # 2. Get all vault matches
+    notes = search_vault(keyword)
+    
+    concept_data = {
+        "projects": [],
+        "events": [],
+        "notes": list(notes.keys())
+    }
+    
+    # 3. Sort the database events into Projects vs Normal Events
+    for e in events:
+        # e[2] is the category column
+        if e[2].lower() == "project":
+            concept_data["projects"].append(e)
+        else:
+            concept_data["events"].append(e)
+            
+    return concept_data

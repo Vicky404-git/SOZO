@@ -1,3 +1,4 @@
+import json
 from groq import Groq
 from sozo.core.config import get_groq_api_key
 
@@ -52,3 +53,32 @@ def generate_commit_message(diff: str) -> str:
         return response.choices[0].message.content.strip()
     except Exception as e:
         raise RuntimeError(f"AI Generation failed: {e}")
+    
+def parse_natural_language_event(text: str) -> dict:
+    client = _get_client()
+    prompt = f"""
+    You are an AI assistant for a personal logging tool. 
+    Extract the action from the following text and return it as a STRICT JSON object.
+    Do not include any Markdown formatting, conversational filler, or code blocks. Just the raw JSON.
+    
+    Expected JSON format:
+    {{
+        "category": "a single word (e.g., study, health, programming, work, life)",
+        "value": "a concise summary of the action (written in past tense)",
+        "tags": ["tag1", "tag2"]
+    }}
+    
+    Text: "{text}"
+    """
+    
+    try:
+        response = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama-3.1-8b-instant",
+            temperature=0.1, # Keep it low so it's highly deterministic
+            response_format={"type": "json_object"} # Forces the AI to return valid JSON
+        )
+        result = response.choices[0].message.content.strip()
+        return json.loads(result)
+    except Exception as e:
+        raise RuntimeError(f"AI parsing failed: {e}")

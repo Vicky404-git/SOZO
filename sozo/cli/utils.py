@@ -188,3 +188,44 @@ def display_dashboard(stats, today_events, timeline_grouped):
     layout["timeline"].update(Panel(format_timeline_preview(timeline_grouped), title="[bold blue]📅 Recent Timeline[/bold blue]", border_style="blue"))
     
     console.print(layout)
+    
+def display_concept(keyword, data):
+    from sozo.core.config import VAULT_PATH
+    
+    if not data["events"] and not data["projects"] and not data["notes"]:
+        show_empty(f"No connections found for concept: '{keyword}'")
+        return
+        
+    print(f"\n[bold cyan]🧠 Concept Node: {keyword.capitalize()}[/bold cyan]\n")
+    root = Tree(f"🪐 [bold magenta]{keyword.capitalize()}[/bold magenta]")
+    
+    # 1. Notes Branch (NOW CLICKABLE!)
+    if data["notes"]:
+        notes_node = root.add("📄 [bold yellow]Notes[/bold yellow]")
+        for note in data["notes"]:
+            # Find the actual file in the vault subfolders
+            found = list(VAULT_PATH.rglob(note))
+            if found:
+                # Convert the path into a clickable 'file://' URI
+                abs_path = found[0].absolute().as_uri()
+                notes_node.add(f"[link={abs_path}][green]{note}[/green][/link]")
+            else:
+                notes_node.add(f"[green]{note}[/green]")
+            
+    # 2. Projects Branch
+    if data["projects"]:
+        proj_node = root.add("🚀 [bold blue]Projects[/bold blue]")
+        for p in data["projects"]:
+            date_str = extract_date(p[1])
+            proj_node.add(f"[dim]{date_str}[/dim] {p[3]}")
+            
+    # 3. Events Branch
+    if data["events"]:
+        events_node = root.add("⚡ [bold cyan]Events[/bold cyan]")
+        for e in data["events"]:
+            date_str = extract_date(e[1])
+            tag_str = f" [cyan]{format_tags(e[5])}[/cyan]" if e[5] else ""
+            events_node.add(f"[dim]{date_str}[/dim] [green]{e[2]}[/green] → {e[3]}{tag_str}")
+            
+    console.print(root)
+    print()

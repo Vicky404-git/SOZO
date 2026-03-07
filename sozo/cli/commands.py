@@ -112,6 +112,43 @@ def register_commands(app: typer.Typer):
     @app.command()
     def search(query: str):
         display_events(search_events(query), f"Search Results for '{query}'")
+        
+    # ------------------------------------------------
+    # BRAIN SEARCH (DEEP VAULT SEARCH)
+    # ------------------------------------------------
+    @app.command()
+    def brain(keyword: str):
+        """Full-text search inside your Markdown vault notes."""
+        from sozo.core.services import search_vault
+        from rich.panel import Panel
+        
+        print(f"[dim]Scanning Second Brain for '{keyword}'...[/dim]")
+        results = search_vault(keyword)
+        
+        if not results:
+            print(f"[yellow]No notes found containing: '{keyword}'[/yellow]")
+            return
+            
+        print(f"\n[bold cyan]🧠 Second Brain Results ({len(results)} found)[/bold cyan]")
+        for filename, snippet in results.items():
+            # Highlight the keyword in the snippet
+            highlighted_snippet = snippet.replace(keyword, f"[bold green]{keyword}[/bold green]")
+            # Also handle capitalized versions
+            highlighted_snippet = highlighted_snippet.replace(keyword.capitalize(), f"[bold green]{keyword.capitalize()}[/bold green]")
+            
+            print(Panel(f"[dim]...{highlighted_snippet}...[/dim]", title=f"[magenta]📄 {filename}[/magenta]", title_align="left"))
+            
+    # ------------------------------------------------
+    # CONCEPT ENGINE
+    # ------------------------------------------------
+    @app.command()
+    def concept(keyword: str):
+        """Unify notes, events, and projects under a single Concept Node."""
+        from sozo.core.services import build_concept
+        from sozo.cli.utils import display_concept
+        
+        data = build_concept(keyword)
+        display_concept(keyword, data)
 
 
     # ------------------------------------------------
@@ -309,3 +346,25 @@ def register_commands(app: typer.Typer):
         from sozo.cli.utils import display_dashboard
         
         display_dashboard(get_stats(), show_today(), get_timeline("week"))
+        
+    # ------------------------------------------------
+    # SMART LOG (AI)
+    # ------------------------------------------------
+    @app.command()
+    def log(text: list[str]):
+        """Smart log using Natural Language and AI."""
+        from sozo.core.services import log_natural_event
+        
+        full_text = " ".join(text)
+        if not full_text:
+            print("[yellow]Please provide some text to log.[/yellow]")
+            return
+            
+        try:
+            with console.status("[bold cyan]🧠 Consulting AI to parse your log...[/bold cyan]", spinner="dots"):
+                category, value, final_tags = log_natural_event(full_text)
+                
+            tag_str = f" [cyan]#{', #'.join(final_tags)}[/cyan]" if final_tags else ""
+            print(f"[green]✔ Smart Logged:[/green] {category} → {value}{tag_str}")
+        except Exception as e:
+            print(f"[red]Error:[/red] {e}")
