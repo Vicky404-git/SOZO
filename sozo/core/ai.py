@@ -5,7 +5,7 @@ from sozo.core.config import get_groq_api_key
 def _get_client():
     api_key = get_groq_api_key()
     if not api_key:
-        raise ValueError("GROQ_API_KEY is missing. Please add it to your .env file.")
+        raise ValueError("GROQ_API_KEY is missing. Please add it to your .env file, or use sozo commit -m \"commit msg\".")
     return Groq(api_key=api_key)
 
 def format_notes_to_markdown(raw_text: str) -> str:
