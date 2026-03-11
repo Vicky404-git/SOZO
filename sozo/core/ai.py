@@ -34,13 +34,28 @@ def format_notes_to_markdown(raw_text: str) -> str:
 def generate_commit_message(diff: str) -> str:
     client = _get_client()
     prompt = f"""
-    You are an expert developer. Generate a concise, conventional commit message for the following git diff.
-    Follow these rules strictly:
-    1. Use conventional format (e.g., feat:, fix:, chore:, refactor:, docs:).
-    2. Keep it under 50 characters if possible.
-    3. Output ONLY the commit message. No explanations, no markdown formatting, no quotes, no yapping, in simple words.
+    You are an expert software engineer.
 
-    Git Diff:
+    Write a high-quality conventional commit message describing the change in the provided git diff.
+
+    Rules:
+    - Use Conventional Commits format: type(scope): message
+    - Allowed types: feat, fix, refactor, docs, style, test, chore, perf
+    - Keep the subject line under 50 characters
+    - Use imperative mood (e.g., "add", "fix", "update", not "added")
+    - Do not include a period at the end
+    - Be concise, clear, and professional
+    - Focus only on the main change
+
+    Output format:
+    type: short description
+
+    Output ONLY the commit message.
+    No explanations.
+    No markdown.
+    No quotes.
+
+    Git diff:
     {diff}
     """
     try:
