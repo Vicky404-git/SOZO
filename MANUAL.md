@@ -1,4 +1,4 @@
-# 🌌 Sōzō — User Manual
+# 🌌 Sōzō (創造) — User Manual
 
 Welcome to Sōzō. This is a local-first personal event engine. Sōzō bridges the gap between a daily logger, an Obsidian knowledge vault, and a Notion command center. 
 
@@ -12,33 +12,32 @@ Turn your terminal into a hacker workspace.
 
 * **Open Dashboard:** `sozo dash`
   *(Splits your terminal into a Notion-style view showing Activity Stats, Today's Actions, and your Recent Timeline feed).*
-* **View Timeline:** `sozo timeline` (or `sozo timeline month`)
-  *(Outputs a beautifully formatted chronological tree of your events grouped by day).*
+* **View Timeline:** `sozo timeline` (or `sozo timeline month` / `sozo timeline week -t aiml`)
+  *(Outputs a beautifully formatted chronological tree of your events grouped by day. Can be filtered by tag).*
 
 ---
 
-## 2. The Knowledge Vault (Obsidian Mode)
-Sōzō features a hidden Markdown vault (`~/.sozo/vault/`) for your deep work, college lectures, and brainstorming.
+## 2. Smart Logging (Natural Language)
+You don't need to manually type out tags and categories anymore. Sōzō has a brain.
 
+* **AI Smart Log:** `sozo log "studied LangChain vector stores for 2 hours"`
+  *(Sends your plain English sentence to Llama-3. The AI automatically figures out the category, formats the action, extracts the tags, and saves it perfectly to your timeline).*
+
+---
+
+## 3. The Second Brain (Knowledge Vault & Concepts)
+Sōzō features a hidden, deeply interconnected Markdown vault (`~/.sozo/vault/`). All notes are generated with official YAML frontmatter, making them 100% compatible with Obsidian and Notion.
+
+* **The Concept Engine:** `sozo concept "python"`
+  *(Unifies your entire life. Instantly gathers every Markdown note, Git commit, and logged event related to "python" and renders them as a hierarchical, clickable tree).*
+* **Deep Brain Search:** `sozo brain "architecture"`
+  *(Performs a full-text regex scan deep inside the actual content of your Markdown vault notes, returning highlighted snippets of where the word was found).*
 * **Create a Note:** `sozo note "Deep Learning Lecture" -c study -t aiml`
-  *(Instantly generates a formatted `.md` file in your vault, logs it to your timeline, and opens it in your default text editor).*
+  *(Generates a YAML-formatted `.md` file in an auto-organized subfolder, logs it to your timeline, and opens your editor).*
 * **AI Note Ingestion:** `sozo ingest raw_notes.txt "Clean AI Notes" -c lecture`
-  *(Takes your messy, unformatted `.txt` dumps and uses Llama 3 to structure them into beautiful Markdown before saving them to the vault).*
-* **The Knowledge Graph:** `sozo graph`
-  *(Scans your vault notes for Obsidian-style `[[wikilinks]]` and draws an ASCII tree of how your thoughts connect).*
-  > **Pro-Tip:** Type `[[Another Idea]]` anywhere inside a Sōzō note to link them together!
-
----
-
-## 3. Event Linking & Tracking
-Record actions and string them together chronologically.
-
-* **Basic Log:** `sozo add programming "Refactored the core engine"`
-* **With Tags & Files:** `sozo add study "Read transformer paper" -t ai -f paper.pdf`
-* **Bidirectional Linking:** `sozo add programming "Wrote the code for the idea" -r 5`
-  *(Uses `-r` or `--relates-to` to link this new event directly back to Event #5).*
-* **File History:** `sozo file "services.py"`
-  *(See a timeline of every single event where you touched that specific file).*
+  *(Takes messy, unformatted `.txt` dumps and uses Llama-3 to structure them into beautiful Markdown before saving).*
+* **The Knowledge Graph:** `sozo graph` (or `sozo graph --export`)
+  *(Scans your vault notes for Obsidian-style `[[wikilinks]]` and draws an ASCII tree of how your thoughts connect. Use `--export` to generate a 2D interactive network graph).*
 
 ---
 
@@ -46,26 +45,42 @@ Record actions and string them together chronologically.
 Sōzō is fully aware of your local Git repositories. If you run Sōzō inside a repo, it tags events with the project name automatically.
 
 * **The AI Auto-Committer:** `sozo commit`
-  *(Reads your staged `git diff`, sends it to Groq's Llama 3 API to generate a conventional commit message, commits the code, and logs the changes directly to your Sōzō timeline).*
+  *(Reads your staged `git diff`, sends it to Groq to generate a conventional commit message, commits the code, and logs the changes directly to your timeline).*
+* **Smart Push:** `sozo push`
+  *(Detects your current branch, asks for confirmation, pushes to the remote repository, and logs the execution).*
 * **Manual Commit:** `sozo commit -m "fixed the login API"`
-* **Git Passthrough:** `sozo git push origin main`
-  *(Runs a normal git push, but secretly logs "Git Execute" to your timeline).*
+* **Git Passthrough:** `sozo git checkout -b feature-branch`
+  *(Runs normal git commands, but secretly logs "Git Execute" to your timeline).*
 
 ---
 
-## 5. Finding & Managing Data
+## 5. Manual Event Tracking
+For when you want complete, rigid control over your logs.
+
+* **Basic Log:** `sozo add programming "Refactored the core engine"`
+* **With Tags & Files:** `sozo add study "Read transformer paper" -t ai -f paper.pdf`
+* **Bidirectional Linking:** `sozo add programming "Wrote the code for the idea" -r 5`
+  *(Uses `-r` or `--relates-to` to link this new event directly back to Event #5).*
+* **Edit an Event:** `sozo edit 14 -v "Updated the value" -t newtag`
+  *(Fix typos or update categories, values, tags, and files of past events).*
+* **File History:** `sozo file "services.py"`
+  *(See a timeline of every single event where you touched that specific file).*
+
+---
+
+## 6. Finding & Managing Data
 * **Today's Events:** `sozo today`
 * **All Events:** `sozo list` (or `sozo list "2026-03-05"`)
-* **Search:** `sozo search "vector stores"`
+* **Database Search:** `sozo search "vector stores"`
+  *(Searches your SQLite database timeline. Use `sozo brain` to search inside files).*
 * **Analytics:** `sozo stats`
 * **Delete Event:** `sozo delete <ID>`
 * **Export Timeline:** `sozo export -t aiml -o my_ai_timeline.md`
 
 ---
 
-## 6. Reminders Engine (Kosmo)
-Sōzō can run a background watcher to remind you of future events.
-
-* **Set a Reminder:** `sozo add work "Deploy to production" --at "tomorrow 5pm" --remind`
-* **Start the Watcher:** `sozo kosmo`
-  *(Leave this running in a separate terminal tab. It will ping you when it's time).*
+## 7. System & Maintenance
+* **Self-Updater:** `sozo --update`
+  *(Automatically pulls the latest Sōzō codebase from GitHub and syncs any new dependencies without needing to reinstall).*
+* **Reminders (Kosmo):** `sozo kosmo`
+  *(Start the background watcher in a separate terminal tab. It will ping you when a future event, created via `sozo add --at "3pm" --remind`, is due).*

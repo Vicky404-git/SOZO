@@ -1,17 +1,17 @@
-# Sozo — Life as Events
+# Sōzō — Life as Events
 
 > **A local-first, CLI-based personal event engine. Git for your life activities.**
 
-Track life as events, not notes. Sozo is a system that records meaningful actions and builds a chronological timeline of what you actually did. 
+Track life as events, not notes. Sōzō is a system that records meaningful actions and builds a chronological timeline of what you actually did. 
 
 **Not a notes app. Not a task manager. Not a diary.**
 
-Most productivity tools force people to write long notes, organize folders, or manage dashboards. But life doesn't work that way. People don't live in pages and tables. They do things. Sozo records actions instead of documents. Think of it like **Git for your life timeline**.
+Most productivity tools force people to write long notes, organize folders, or manage dashboards. But life doesn't work that way. People don't live in pages and tables. They do things. Sōzō records actions instead of documents. Think of it like **Git for your life timeline**.
 
 ---
 
 ## 🚀 The Core Idea
-Everything in Sozo is an **Event**. Over time, these events weave together to form a complete timeline of your work, learning, and projects.
+Everything in Sōzō is an **Event**. Over time, these events weave together to form a complete timeline of your work, learning, and projects.
 
 * **Timestamp:** `2026-03-05 09:02`
 * **Category:** `programming`
@@ -20,139 +20,101 @@ Everything in Sozo is an **Event**. Over time, these events weave together to fo
 
 ---
 
-## ⚡ Features (The Second Brain Upgrades)
+## ⚡ Features (The Second Brain & Autonomy Upgrades)
 
-Sozo has evolved from a simple logger into a deeply interconnected knowledge system:
+Sōzō has evolved from a simple logger into a deeply interconnected, AI-powered knowledge system:
 
-* **The Command Center:** Run `sozo dash` to turn your terminal into a Notion-style split-screen dashboard showing stats, today's actions, and your timeline feed.
-* **The Knowledge Vault:** Use `sozo note` to automatically generate, format, and track Markdown files in a hidden local vault.
+* **Natural Language Logging:** Type normal sentences like `sozo log "studied LangChain for 2 hours"` and let the Llama-3 AI automatically extract the category, action, and tags.
+* **The Concept Engine:** Run `sozo concept <keyword>` to instantly unify your disconnected notes, Git commits, and timeline events into a single, hierarchical Obsidian-style Concept Node.
+* **Deep Brain Search:** Run `sozo brain <keyword>` to perform full-text regex scanning across your entire hidden Markdown vault.
+* **The Knowledge Vault:** Use `sozo note` to automatically generate, format, and track Markdown files. Sōzō injects official YAML frontmatter so your notes are compatible with Obsidian and Notion.
 * **AI Auto-Ingestion:** Dump raw, messy `.txt` thoughts into `sozo ingest`, and the Groq AI will instantly format it into clean Markdown and save it to your vault.
-* **Obsidian-Style Graph:** Use `[[wikilinks]]` inside your notes, then run `sozo graph` to render an ASCII tree mapping how all your thoughts connect.
-* **Bidirectional Timeline Linking:** Use the `-r` flag to visually link today's code commit back to a brainstorming note you wrote three weeks ago.
-* **AI Git Auto-Committer:** Run `sozo commit` to have Llama 3 read your staged code, write a conventional commit message, and log the changes to your timeline.
-* **Auto-Context:** Sozo detects your Git repositories and links physical files to your events automatically.
+* **AI Git Workflows:** Run `sozo commit` to have Llama 3 read your staged code, write a conventional commit message, and log the changes. Then run `sozo push` for smart branch detection and automated remote syncing.
+* **The Command Center:** Run `sozo dash` to turn your terminal into a Notion-style split-screen dashboard showing stats, today's actions, and your timeline feed.
+* **Self-Updating:** Run `sozo --update` to automatically pull the latest codebase from GitHub and sync dependencies without needing to reinstall.
 
 ---
 
 ## 🛠️ Installation
 
-Clone the repository:
+### Clone the repository:
 ```bash
 git clone [https://github.com/Vicky404-git/SOZO.git](https://github.com/Vicky404-git/SOZO.git)
 cd SOZO
-
 ```
+### Create and activate a virtual environment (Windows):
 
-Create and activate a virtual environment (Windows):
-
-Bash
-
-```
+```Bash
 python -m venv sozoenv
 sozoenv\Scripts\activate
-
 ```
+### Install the project (Editable Mode):
 
-Install the project:
-
-Bash
-
-```
+```Bash
 pip install -e .
-
 ```
-
-_Note for AI Features: Create a `.env` file in the root of the `SOZO` folder with `GROQ_API_KEY=your_key_here` to enable `sozo commit` and `sozo ingest`._
-
-----------
+**Note for AI Features: Create a .env file in the root of the SOZO folder with GROQ_API_KEY=your_key_here to enable sozo log, sozo commit, and sozo ingest.**
 
 ## 📖 Quick Start & Example Workflow
+### Open the Terminal Dashboard:
 
-**Open the Terminal Dashboard:**
-
-Bash
-
-```
+```Bash
 sozo dash
-
 ```
+### Log an action using natural language AI:
 
-**Log an action linked to a previous idea:**
-
-Bash
-
+```Bash
+sozo log "built the graph scanner for my python project"
 ```
-sozo add programming "built the graph scanner" -t python -f core/services.py -r 14
+### Auto-format study notes with AI:
 
-```
-
-**Auto-format study notes with AI:**
-
-Bash
-
-```
+```Bash
 sozo ingest raw_lecture.txt "Neural Networks Ch 1" -c study -t aiml
-
 ```
+### View a unified Concept Node (Notes + Events + Projects):
 
-**View your Knowledge Graph:**
-
-Bash
-
+```Bash
+sozo concept python
 ```
-sozo graph
+### Search deep inside your vault notes:
 
+```Bash
+sozo brain "architecture"
 ```
+### Auto-commit your code and push it:
 
-**Auto-commit your code and log it:**
-
-Bash
-
-```
+``` Bash
 sozo commit
-
+sozo push
 ```
+### Update Sōzō to the latest version:
 
-_(For the complete guide, type `sozo --help` or `sozo manual` in your terminal)._
-
-----------
+``` Bash
+sozo --update
+```
+**(For the complete guide, type sozo --help or sozo manual in your terminal).**
 
 ## 🗄️ Database Architecture
+Sōzō uses a local, private SQLite database. No servers, no accounts.
 
-Sozo uses a local, private SQLite database. No servers, no accounts.
+**Table**: events
 
-**Table:** `events`
-
--   `id` (INTEGER PRIMARY KEY)
-    
--   `timestamp` (TEXT)
-    
--   `category` (TEXT)
-    
--   `value` (TEXT)
-    
--   `created_at` (TEXT)
-    
--   `remind` (INTEGER)
-    
--   `reminded` (INTEGER)
-    
--   `tags` (TEXT)
-    
--   `files` (TEXT)
-    
--   `relates_to` (INTEGER)
-    
-
-----------
+- id (INTEGER PRIMARY KEY)
+- timestamp (TEXT)
+- category (TEXT)
+- value (TEXT)
+- created_at (TEXT)
+- remind (INTEGER)
+- reminded (INTEGER)
+- tags (TEXT)
+- files (TEXT)
+- relates_to (INTEGER)
 
 ## 🗺️ Roadmap
+- **DaemonV Integration**: Moving the kosmo reminder engine into a silent, native Windows background service so it doesn't require an open terminal tab.
 
--   **DaemonV Integration:** Moving the `kosmo` reminder engine into a silent, native background service so it doesn't require an open terminal tab.
-    
--   **Natural Language Processing:** `sozo log studied transformers for 2h` -> auto-parses category, value, and duration.
-    
+- **AI Semantic Search (Vector Space)**: Upgrading sozo brain from keyword search to local LangChain/FAISS vector embeddings so searching for "exhausted" finds logs about "pulling an all-nighter."
 
-----------
+- **True Life Knowledge Graph**: Expanding the Mermaid.js graph visualization to map connections between Events → Projects → Concepts.
 
-**Created by Vicky404** [GitHub Profile](https://github.com/Vicky404-git)
+**Created by Vicky404** | GitHub Profile
