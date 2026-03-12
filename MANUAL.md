@@ -1,4 +1,4 @@
-# 🌌 Sōzō (創造) — User Manual
+# 🌌 Sōzō — User Manual
 
 Welcome to Sōzō. This is a local-first personal event engine. Sōzō bridges the gap between a daily logger, an Obsidian knowledge vault, and a Notion command center. 
 
