@@ -212,6 +212,53 @@ def register_commands(app: typer.Typer):
 
         except Exception as e:
             print(f"[red]Error:[/red] {e}")
+            
+
+    # ------------------------------------------------
+    # SMART PUSH
+    # ------------------------------------------------
+    @app.command()
+    def push():
+        """Smart git push with branch confirmation."""
+        from sozo.core.services import detect_project, add_event
+        
+        # 1. Detect the current branch (main or master)
+        try:
+            result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True)
+            current_branch = result.stdout.strip()
+            if not current_branch:
+                current_branch = "master" # Fallback
+        except Exception:
+            print("[red]Error: Not inside a valid git repository.[/red]")
+            return
+
+        # 2. Ask the user (Y/N)
+        is_default = current_branch in ["main", "master"]
+        prompt_msg = f"Push to {current_branch} right?" if is_default else f"Push to current branch '{current_branch}'?"
+        
+        # typer.confirm automatically handles the (Y/N) logic
+        if typer.confirm(prompt_msg, default=True):
+            target_branch = current_branch
+        else:
+            # 3. If N, ask them to type the branch name
+            target_branch = typer.prompt("Enter the branch name to push to")
+
+        print(f"\n[dim]Executing: git push origin {target_branch}[/dim]")
+        
+        # 4. Execute the push
+        push_result = subprocess.run(["git", "push", "origin", target_branch])
+        
+        # 5. Log it to Sōzō if successful
+        if push_result.returncode == 0:
+            project = detect_project()
+            tags = ["git"]
+            if project:
+                tags.append(project)
+
+            add_event("programming", f"Git Push: origin {target_branch}", tags=tags)
+            print("[blue]✔ Push logged to Sōzō timeline.[/blue]")
+        else:
+            print("[red]✖ Git push failed. Check your remote and permissions.[/red]")
 
 
     # ------------------------------------------------
