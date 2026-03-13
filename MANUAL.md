@@ -1,125 +1,419 @@
 # 🌌 Sōzō (創造) — User Manual
 
-Welcome to Sōzō. This is a local-first personal event engine. Sōzō bridges the gap between a daily logger, an Obsidian knowledge vault, and a Notion command center. 
+Welcome to **Sōzō**.
 
-## Core Philosophy
-Everything you do is an **Event**. Sōzō doesn't just store files; it records *when* you did something, *why* you did it, and *what* it connects to.
+Sōzō is a **local-first personal event engine**. It bridges the gap between a daily activity logger, an Obsidian-style knowledge vault, and a terminal command center.
 
----
-
-## 1. The Command Center
-Turn your terminal into a hacker workspace.
-
-* **Open Dashboard:** `sozo dash`
-  *(Splits your terminal into a Notion-style view showing Activity Stats, Today's Actions, and your Recent Timeline feed).*
-* **View Timeline:** `sozo timeline` (or `sozo timeline month` / `sozo timeline week -t aiml`)
-  *(Outputs a beautifully formatted chronological tree of your events grouped by day. Can be filtered by tag).*
-* **Edit an Event:** `sozo edit <ID> [-c CATEGORY] [-v VALUE] [-t TAG] [-f FILE]`
-  *(Fix typos or update categories, values, tags, and files of past events).*
-* **Delete an Event:** `sozo delete <ID>`
-  *(Permanently removes an event from your database).*
+Everything you do becomes part of a **chronological timeline of events**.
 
 ---
 
-## 2. Smart Logging (Natural Language)
-You don't need to manually type out tags and categories anymore. Sōzō has a brain.
+# Core Philosophy
 
-* **AI Smart Log:** `sozo log "studied LangChain vector stores for 2 hours"`
-  *(Sends your plain English sentence to Llama-3. The AI automatically figures out the category, formats the action, extracts the tags, and saves it perfectly to your timeline).*
+Everything you do is an **Event**.
 
----
+Sōzō doesn't just store files. It records:
 
-## 3. The Second Brain (Knowledge Vault & Concepts)
-Sōzō features a hidden, deeply interconnected Markdown vault (`~/.sozo/vault/`). All notes are generated with official YAML frontmatter, making them 100% compatible with Obsidian and Notion.
+* **when** something happened
+* **what** you did
+* **how it connects** to other work
 
-* **The Concept Engine:** `sozo concept "python"`
-  *(Unifies your entire life. Instantly gathers every Markdown note, Git commit, and logged event related to "python" and renders them as a hierarchical, clickable tree).*
-* **Deep Brain Search:** `sozo brain "architecture"`
-  *(Performs a full-text regex scan deep inside the actual content of your Markdown vault notes, returning highlighted snippets of where the word was found).*
-* **Create a Note:** `sozo note "Deep Learning Lecture" [-c CATEGORY] [-t TAG]`
-  *(Generates a YAML-formatted `.md` file in an auto-organized subfolder, logs it to your timeline, and opens your editor).*
-* **AI Note Ingestion:** `sozo ingest RAW_FILE.TXT "Clean AI Notes" [-c CATEGORY] [-t TAG]`
-  *(Takes messy, unformatted `.txt` dumps and uses Llama-3 to structure them into beautiful Markdown before saving).*
-* **The Knowledge Graph:** `sozo graph` (or `sozo graph --export`)
-  *(Scans your vault notes for Obsidian-style `[[wikilinks]]` and draws an ASCII tree of how your thoughts connect. Use `--export` to generate a 2D interactive network graph).*
+Over time, these events form a complete **life timeline database**.
 
 ---
 
-## 4. Git & AI Workflows
-Sōzō is fully aware of your local Git repositories. If you run Sōzō inside a repo, it tags events with the project name automatically.
+# 1. The Command Center
 
-* **The AI Auto-Committer:** `sozo commit [-m MESSAGE]`
-  *(Reads your staged `git diff`, sends it to Groq to generate a conventional commit message, commits the code, and logs the changes directly to your timeline).*
-* **Smart Push:** `sozo push`
-  *(Detects your current branch, asks for confirmation, pushes to the remote repository, and logs the execution).*
-* **Manual Commit:** `sozo commit -m "fixed the login API"`
-* **Git Passthrough:** `sozo git [COMMAND]`
-  *(Runs normal git commands, but secretly logs "Git Execute" to your timeline).*
+Turn your terminal into a **personal activity dashboard**.
 
----
+### Open Dashboard
 
-## 5. Manual Event Tracking
-For when you want complete, rigid control over your logs.
+```
+sozo dash
+```
 
-* **Basic Log:** `sozo add CATEGORY "VALUE" [-a AT] [-r RELATES_TO] [-t TAG] [-f FILE]`
-  *(Creates a new event with the specified category, value, and tags).*
-* **With Tags & Files:** `sozo add CATEGORY "VALUE" [-t TAG] [-f FILE]`
-  *(Creates a new event with the specified category, value, tags, and files).*
-* **Bidirectional Linking:** `sozo add CATEGORY "VALUE" [-r RELATES_TO]`
-  *(Uses `-r` or `--relates-to` to link this new event directly back to Event #RELATES_TO).*
-* **File History:** `sozo file FILENAME`
-  *(See a timeline of every single event where you touched that specific file).*
+Displays:
+
+* Activity statistics
+* Today's events
+* Recent timeline preview
 
 ---
 
-## 6. Finding & Managing Data
-* **Today's Events:** `sozo today`
-* **All Events:** `sozo list` (or `sozo list DATE`)
-* **Database Search:** `sozo search QUERY`
-  *(Searches your SQLite database timeline. Use `sozo brain` to search inside files).*
-* **Analytics:** `sozo stats`
-* **Export Timeline:** `sozo export [-t TAG] [-o OUTPUT_FILE]`
-  *(Exports your timeline to a Markdown file, optionally filtered by tag).*
+### View Timeline
+
+```
+sozo timeline
+```
+
+Or filter by time:
+
+```
+sozo timeline week
+sozo timeline month
+```
+
+Filter by tag:
+
+```
+sozo timeline week --tag python
+```
+
+This displays events grouped by day in chronological order.
 
 ---
 
-## 7. System & Maintenance
-* **Self-Updater:** `sozo --update`
-  *(Automatically pulls the latest Sōzō codebase from GitHub and syncs any new dependencies without needing to reinstall).*
-* **Reminders (Kosmo):** `sozo kosmo`
-  *(Start the background watcher in a separate terminal tab. It will ping you when a future event, created via `sozo add --at "3pm" --remind`, is due).*
-* **Manual:** `sozo manual`
-  *(Opens the MANUAL.md file in your default editor).*
+### Edit an Event
+
+```
+sozo edit <ID> [-c CATEGORY] [-v VALUE] [-t TAG] [-f FILE]
+```
+
+Example:
+
+```
+sozo edit 14 -v "updated project description"
+```
+
+Allows you to modify past events.
 
 ---
 
-## 8. Additional Commands
-* **Timeline for a Specific Period:** `sozo timeline PERIOD` (e.g., `sozo timeline week`)
-* **Timeline for a Specific Tag:** `sozo timeline -t TAG`
-* **Note with a Specific Title:** `sozo note TITLE [-c CATEGORY] [-t TAG]`
-* **Ingest a Raw Text File:** `sozo ingest RAW_FILE.TXT [-c CATEGORY] [-t TAG]`
-* **Graph with Export Option:** `sozo graph --export`
-* **Dashboard with Custom Data:** `sozo dash [-t TAG]`
-* **Smart Log with Multiple Sentences:** `sozo log "sentence 1" "sentence 2" ...`
-* **Auto Docs with Sync Option:** `sozo docs --sync`
-* **File History with a Specific File:** `sozo file FILENAME`
-* **Auto Commit with a Custom Message:** `sozo commit -m MESSAGE`
-* **Git Passthrough with Custom Commands:** `sozo git [COMMAND]`
-* **Edit with Category, Value, Tags, and Files:** `sozo edit <ID> [-c CATEGORY] [-v VALUE] [-t TAG] [-f FILE]`
-* **Delete with Event ID:** `sozo delete <ID>`
-* **Today's Events:** `sozo today`
-* **All Events:** `sozo list` (or `sozo list DATE`)
-* **Database Search:** `sozo search QUERY`
-* **Analytics:** `sozo stats`
-* **Export Timeline:** `sozo export [-t TAG] [-o OUTPUT_FILE]`
-* **Timeline for a Specific Period:** `sozo timeline PERIOD` (e.g., `sozo timeline week`)
-* **Timeline for a Specific Tag:** `sozo timeline -t TAG`
-* **Note with a Specific Title:** `sozo note TITLE [-c CATEGORY] [-t TAG]`
-* **Ingest a Raw Text File:** `sozo ingest RAW_FILE.TXT [-c CATEGORY] [-t TAG]`
-* **Graph with Export Option:** `sozo graph --export`
-* **Dashboard with Custom Data:** `sozo dash [-t TAG]`
-* **Smart Log with Multiple Sentences:** `sozo log "sentence 1" "sentence 2" ...`
-* **Auto Docs with Sync Option:** `sozo docs --sync`
-* **File History with a Specific File:** `sozo file FILENAME`
-* **Auto Commit with a Custom Message:** `sozo commit -m MESSAGE`
-* **Git Passthrough with Custom Commands:** `sozo git [COMMAND]`
+### Delete an Event
+
+```
+sozo delete <ID>
+```
+
+Removes the event permanently from the database.
+
+---
+
+# 2. Smart Logging (Natural Language)
+
+You don't need to manually define categories or tags.
+
+### AI Smart Log
+
+```
+sozo log "studied LangChain vector stores for 2 hours"
+```
+
+Sōzō uses AI to:
+
+* detect category
+* format the action
+* generate relevant tags
+
+---
+
+### Multi-Sentence Logging
+
+```
+sozo log "implemented graph engine" "fixed CLI bugs"
+```
+
+Multiple actions can be logged at once.
+
+---
+
+# 3. The Second Brain
+
+Sōzō includes a hidden Markdown vault:
+
+```
+~/.sozo/vault/
+```
+
+All notes contain **YAML frontmatter** and are compatible with tools like:
+
+* Obsidian
+* Notion
+* Markdown editors
+
+---
+
+### Concept Engine
+
+```
+sozo concept python
+```
+
+Displays a hierarchical node connecting:
+
+* notes
+* projects
+* timeline events
+
+---
+
+### Deep Brain Search
+
+```
+sozo brain "architecture"
+```
+
+Performs a **full-text search inside vault notes**.
+
+---
+
+### Create a Note
+
+```
+sozo note "Deep Learning Lecture" -c study -t ai
+```
+
+Creates a Markdown note and opens it in your editor.
+
+---
+
+### AI Note Ingestion
+
+```
+sozo ingest messy_notes.txt "Clean AI Notes" -c study -t ai
+```
+
+Sōzō uses AI to convert messy text into structured Markdown.
+
+---
+
+### Knowledge Graph
+
+```
+sozo graph
+```
+
+Scans notes for `[[wikilinks]]` and displays relationships.
+
+Export a graph:
+
+```
+sozo graph --export
+```
+
+This generates a **Mermaid network diagram**.
+
+---
+
+# 4. Git & AI Workflows
+
+Sōzō integrates directly with Git repositories.
+
+If run inside a repo, events are automatically tagged with the **project name**.
+
+---
+
+### AI Auto Commit
+
+```
+sozo commit
+```
+
+Sōzō:
+
+1. reads your staged `git diff`
+2. generates a commit message with AI
+3. commits the changes
+4. logs the commit to your timeline
+
+---
+
+### Manual Commit Message
+
+```
+sozo commit -m "fix login API bug"
+```
+
+---
+
+### Smart Push
+
+```
+sozo push
+```
+
+Sōzō detects your current branch and pushes to the remote repository.
+
+---
+
+### Git Passthrough
+
+```
+sozo git status
+sozo git pull
+sozo git checkout dev
+```
+
+Runs git commands while logging activity.
+
+---
+
+# 5. Manual Event Tracking
+
+When you want full control over event creation.
+
+### Add Event
+
+```
+sozo add CATEGORY "VALUE" [--at TIME] [--remind] [-t TAG] [-f FILE] [--relates-to EVENT_ID]
+```
+
+Example:
+
+```
+sozo add study "read transformer paper" --tag ai
+```
+
+Options:
+
+| Option                  | Description           |
+| ----------------------- | --------------------- |
+| `--at TIME`             | schedule event time   |
+| `--remind`              | enable reminder       |
+| `-t TAG`                | attach tags           |
+| `-f FILE`               | attach related files  |
+| `--relates-to EVENT_ID` | link to another event |
+
+---
+
+### File History
+
+```
+sozo file services.py
+```
+
+Displays all timeline events associated with that file.
+
+---
+
+# 6. Finding & Managing Data
+
+### Today's Events
+
+```
+sozo today
+```
+
+---
+
+### List Events
+
+```
+sozo list
+```
+
+Filter by date:
+
+```
+sozo list 2026-03-10
+```
+
+---
+
+### Search Database
+
+```
+sozo search python
+```
+
+Searches inside the **event database**.
+
+Use `sozo brain` to search inside vault files.
+
+---
+
+### Activity Statistics
+
+```
+sozo stats
+```
+
+Shows event counts by category.
+
+---
+
+### Export Timeline
+
+```
+sozo export -o timeline.md
+```
+
+Export events to a Markdown file.
+
+Filter by tag:
+
+```
+sozo export --tag python
+```
+
+---
+
+# 7. System & Maintenance
+
+### Self Update
+
+```
+sozo --update
+```
+
+Updates Sōzō from GitHub and installs new dependencies.
+
+---
+
+### Reminder Engine (Kosmo)
+
+```
+sozo kosmo
+```
+
+Runs a background watcher for scheduled events.
+
+Example reminder event:
+
+```
+sozo add work "email professor" --at "3pm" --remind
+```
+
+---
+
+### Manual
+
+```
+sozo manual
+```
+
+Opens the **MANUAL.md** file in your editor.
+
+---
+
+### Documentation Sync (AI)
+
+```
+sozo docs --sync
+```
+
+Automatically updates project documentation.
+
+---
+
+# 8. Additional Useful Commands
+
+| Command         | Purpose                              |
+| --------------- | ------------------------------------ |
+| `sozo dash`     | open dashboard                       |
+| `sozo timeline` | view activity timeline               |
+| `sozo note`     | create markdown note                 |
+| `sozo ingest`   | convert raw text to structured notes |
+| `sozo graph`    | visualize knowledge graph            |
+| `sozo commit`   | AI-generated commit                  |
+| `sozo push`     | push git branch                      |
+| `sozo git`      | run git commands                     |
+| `sozo stats`    | show usage statistics                |
+
+---
+
+# Final Thought
+
+Sōzō quietly builds a **structured memory of your work and life**.
+
+Instead of writing long notes, you simply **do things** — and Sōzō records them as events.

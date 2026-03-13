@@ -457,7 +457,7 @@ def sync_documentation():
         project_context = project_context[:12000] + "\n... [TRUNCATED DUE TO SIZE]"
     # ------------------------------
     
-    docs_to_sync = ["MANUAL.md", "EXAMPLE.md", "README.md"]
+    docs_to_sync = ["README.md"]
     updated_files = []
     
     # 3. Loop through docs in the CURRENT folder

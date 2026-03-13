@@ -158,6 +158,7 @@ def generate_updated_docs(project_context: str, current_doc: str, doc_name: str)
     3. Preserve the exact tone, style, and formatting of the original document.
     4. Do NOT output any markdown code blocks (like ```markdown), just output the raw text.
     5. Do NOT add conversational filler (e.g., "Here is the updated text...").
+    6. Do NOT abbreviate or summarize. You MUST output the entire, full-length comprehensive document from start to finish.
     
     Project Source Skeleton (The Source of Truth):
     {project_context}
@@ -168,9 +169,9 @@ def generate_updated_docs(project_context: str, current_doc: str, doc_name: str)
     try:
         response = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
-            model="meta-llama/llama-4-scout-17b-16e-instruct", # <-- Your new model
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             temperature=0.1, 
-            max_tokens=2500, # <-- LOWERED from 4000 to prevent Error 400
+            max_tokens=3500, # Increased slightly to allow for full-length READMEs
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
