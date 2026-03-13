@@ -405,3 +405,67 @@ def build_concept(keyword: str) -> dict:
             concept_data["events"].append(e)
             
     return concept_data
+
+# --------------------------------------------------
+# AUTO DOCUMENTATION
+# --------------------------------------------------
+
+def sync_documentation():
+    from sozo.core.ai import generate_updated_docs
+    import time
+    
+    # 1. Find the project root and read the commands.py file
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    commands_file = root_dir / "sozo" / "cli" / "commands.py"
+    
+    if not commands_file.exists():
+        raise FileNotFoundError("Could not find commands.py to read CLI context.")
+        
+    with open(commands_file, "r", encoding="utf-8") as f:
+        cli_context = f.read()
+        
+    docs_to_sync = ["MANUAL.md", "EXAMPLE.md", "README.md"]
+    updated_files = []
+    
+    # 2. Loop through each doc and ask AI to update it
+    for doc_name in docs_to_sync:
+        doc_path = root_dir / doc_name
+        if not doc_path.exists():
+            continue
+            
+        with open(doc_path, "r", encoding="utf-8") as f:
+            current_content = f.read()
+            
+        # Call the AI!
+        new_content = generate_updated_docs(cli_context, current_content, doc_name)
+        
+        # Cleanup: Sometimes Llama-3 wraps the whole response in ```markdown
+        if new_content.startswith("```markdown"):
+            new_content = new_content.replace("```markdown", "", 1)
+        if new_content.startswith("```"):
+            new_content = new_content.replace("```", "", 1)
+        if new_content.endswith("```"):
+            new_content = new_content[:-3]
+            
+        # 3. Safely overwrite the file
+        with open(doc_path, "w", encoding="utf-8") as f:
+            f.write(new_content.strip() + "\n")
+            
+        updated_files.append(doc_name)
+        time.sleep(2) # Pause for 2 seconds to avoid Groq rate limits
+        
+    # 4. Log the action to Sōzō!
+    if updated_files:
+        files_str = ",".join(updated_files)
+        insert_event(
+            datetime.now().isoformat(),
+            "programming",
+            f"Auto-synced documentation: {', '.join(updated_files)}",
+            datetime.now().isoformat(),
+            0,
+            "docs,ai,SOZO",
+            files_str,
+            None
+        )
+        
+    return updated_files

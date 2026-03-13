@@ -32,6 +32,11 @@ Sōzō has evolved from a simple logger into a deeply interconnected, AI-powered
 * **AI Git Workflows:** Run `sozo commit` to have Llama 3 read your staged code, write a conventional commit message, and log the changes. Then run `sozo push` for smart branch detection and automated remote syncing.
 * **The Command Center:** Run `sozo dash` to turn your terminal into a Notion-style split-screen dashboard showing stats, today's actions, and your timeline feed.
 * **Self-Updating:** Run `sozo --update` to automatically pull the latest codebase from GitHub and sync dependencies without needing to reinstall.
+* **Timeline:** Run `sozo timeline` to view your events organized by week, month, or year. Use `--tag` to filter by specific tags.
+* **Graph:** Run `sozo graph` to visualize your knowledge graph as a Mermaid.js network diagram. Use `--export` to save the graph as a 2D image.
+* **File History:** Run `sozo file <name>` to view a list of events related to a specific file.
+* **Smart Log (AI):** Run `sozo log` to log actions using natural language and AI.
+* **Auto Docs:** Run `sozo docs` to auto-update your Markdown documentation files using AI.
 
 ---
 

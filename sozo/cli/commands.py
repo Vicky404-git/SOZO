@@ -415,3 +415,27 @@ def register_commands(app: typer.Typer):
             print(f"[green]✔ Smart Logged:[/green] {category} → {value}{tag_str}")
         except Exception as e:
             print(f"[red]Error:[/red] {e}")
+            
+    # ------------------------------------------------
+    # AUTO DOCS
+    # ------------------------------------------------
+    @app.command()
+    def docs(sync: bool = typer.Option(False, "--sync", "-s", help="Auto-update markdown docs using AI")):
+        """AI tool to auto-write and sync Sōzō documentation."""
+        if not sync:
+            print("[yellow]Use 'sozo docs --sync' to auto-update your documentation files based on current code.[/yellow]")
+            return
+            
+        from sozo.core.services import sync_documentation
+        
+        try:
+            with console.status("[bold magenta]🤖 AI is reading your code and rewriting docs...[/bold magenta]", spinner="point"):
+                updated = sync_documentation()
+                
+            if updated:
+                print(f"[green]✔ Successfully updated:[/green] {', '.join(updated)}")
+                print("[blue]✔ Action logged to Sōzō timeline.[/blue]")
+            else:
+                print("[yellow]No documentation files found to update.[/yellow]")
+        except Exception as e:
+            print(f"[red]Error syncing docs:[/red] {e}")
