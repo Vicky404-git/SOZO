@@ -37,6 +37,27 @@ Sōzō has evolved from a simple logger into a deeply interconnected, AI-powered
 * **File History:** Run `sozo file <name>` to view a list of events related to a specific file.
 * **Smart Log (AI):** Run `sozo log` to log actions using natural language and AI.
 * **Auto Docs:** Run `sozo docs` to auto-update your Markdown documentation files using AI.
+* **Add Event:** Run `sozo add` to create a new event with customizable metadata, tags, and files. Use `--at` to specify a specific date and time, `--remind` to set a reminder, and `--tag` to assign tags.
+* **Edit Event:** Run `sozo edit` to modify an existing event. Use `--category` to change the category, `--value` to update the value, and `--tag` to add or remove tags.
+* **Delete Event:** Run `sozo delete` to remove an event by its ID.
+* **Export Events:** Run `sozo export` to export events to a Markdown file. Use `--tag` to filter by specific tags and `--out` to specify the output file.
+* **List Events:** Run `sozo list` to view a list of events. Use `--date` to filter by date.
+* **Today's Events:** Run `sozo today` to view a list of events for the current day.
+* **Search Events:** Run `sozo search` to search for events by keyword.
+* **Stats:** Run `sozo stats` to view statistics about your events.
+* **Kosmo Reminder Engine:** Run `sozo kosmo` to manage reminders and notifications.
+* **Manual:** Run `sozo manual` to view the manual for Sōzō.
+* **Commit:** Run `sozo commit` to commit changes to your Git repository. Use `--msg` to specify a custom commit message.
+* **Push:** Run `sozo push` to push changes to your remote Git repository.
+* **Git:** Run `sozo git` to manage your Git repository.
+* **Timeline:** Run `sozo timeline` to view your events organized by week, month, or year. Use `--tag` to filter by specific tags.
+* **Note:** Run `sozo note` to create a new note with customizable metadata and tags.
+* **File:** Run `sozo file` to view a list of files.
+* **Ingest:** Run `sozo ingest` to import raw text into your vault. Use `--title` to specify the title, `--category` to specify the category, and `--tag` to assign tags.
+* **Graph:** Run `sozo graph` to visualize your knowledge graph as a Mermaid.js network diagram. Use `--export` to save the graph as a 2D image.
+* **Dash:** Run `sozo dash` to turn your terminal into a Notion-style split-screen dashboard showing stats, today's actions, and your timeline feed.
+* **Log:** Run `sozo log` to log actions using natural language and AI.
+* **Docs:** Run `sozo docs` to auto-update your Markdown documentation files using AI.
 
 ---
 
@@ -69,7 +90,7 @@ sozo dash
 ### Log an action using natural language AI:
 
 ```Bash
-sozo log "built the graph scanner for my python project"
+sozo log "studied LangChain for 2 hours"
 ```
 ### Auto-format study notes with AI:
 

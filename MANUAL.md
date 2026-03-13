@@ -105,3 +105,21 @@ For when you want complete, rigid control over your logs.
 * **File History with a Specific File:** `sozo file FILENAME`
 * **Auto Commit with a Custom Message:** `sozo commit -m MESSAGE`
 * **Git Passthrough with Custom Commands:** `sozo git [COMMAND]`
+* **Edit with Category, Value, Tags, and Files:** `sozo edit <ID> [-c CATEGORY] [-v VALUE] [-t TAG] [-f FILE]`
+* **Delete with Event ID:** `sozo delete <ID>`
+* **Today's Events:** `sozo today`
+* **All Events:** `sozo list` (or `sozo list DATE`)
+* **Database Search:** `sozo search QUERY`
+* **Analytics:** `sozo stats`
+* **Export Timeline:** `sozo export [-t TAG] [-o OUTPUT_FILE]`
+* **Timeline for a Specific Period:** `sozo timeline PERIOD` (e.g., `sozo timeline week`)
+* **Timeline for a Specific Tag:** `sozo timeline -t TAG`
+* **Note with a Specific Title:** `sozo note TITLE [-c CATEGORY] [-t TAG]`
+* **Ingest a Raw Text File:** `sozo ingest RAW_FILE.TXT [-c CATEGORY] [-t TAG]`
+* **Graph with Export Option:** `sozo graph --export`
+* **Dashboard with Custom Data:** `sozo dash [-t TAG]`
+* **Smart Log with Multiple Sentences:** `sozo log "sentence 1" "sentence 2" ...`
+* **Auto Docs with Sync Option:** `sozo docs --sync`
+* **File History with a Specific File:** `sozo file FILENAME`
+* **Auto Commit with a Custom Message:** `sozo commit -m MESSAGE`
+* **Git Passthrough with Custom Commands:** `sozo git [COMMAND]`
