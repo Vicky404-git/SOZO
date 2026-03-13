@@ -4,8 +4,8 @@
 
 ![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![CLI](https://img.shields.io/badge/interface-CLI-orange)
-![AI Powered](https://img.shields.io/badge/AI-Groq%20Llama-purple)
+![CLI](https://img.shields.io/badge/interface-CLI-grey)
+![AI Powered](https://img.shields.io/badge/AI-Groq%20-orange)
 ![Local First](https://img.shields.io/badge/data-local--first-brightgreen)
 
 Track life as **events**, not notes. Sōzō records meaningful actions and builds a chronological timeline of what you actually did.
