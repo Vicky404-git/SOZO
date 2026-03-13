@@ -168,7 +168,7 @@ def generate_updated_docs(project_context: str, current_doc: str, doc_name: str)
     try:
         response = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
-            model="llama-3.1-8b-instant",
+            model="meta-llama/llama-4-scout-17b-16e-instruct",  # Using a more powerful and more token model for complex doc generation
             temperature=0.1, 
             max_tokens=4000,
         )
