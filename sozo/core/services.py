@@ -451,6 +451,10 @@ def sync_documentation():
         raise FileNotFoundError(f"Could not find any code files in {root_dir.name} to read context from.")
         
     project_context = "\n".join(skeleton)
+    
+    # --- NEW: Cap the skeleton size to prevent Error 400 ---
+    if len(project_context) > 12000:
+        project_context = project_context[:12000] + "\n... [TRUNCATED DUE TO SIZE]"
     # ------------------------------
     
     docs_to_sync = ["MANUAL.md", "EXAMPLE.md", "README.md"]

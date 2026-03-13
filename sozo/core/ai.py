@@ -168,9 +168,9 @@ def generate_updated_docs(project_context: str, current_doc: str, doc_name: str)
     try:
         response = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
-            model="meta-llama/llama-4-scout-17b-16e-instruct",  # Using a more powerful and more token model for complex doc generation
+            model="meta-llama/llama-4-scout-17b-16e-instruct", # <-- Your new model
             temperature=0.1, 
-            max_tokens=4000,
+            max_tokens=2500, # <-- LOWERED from 4000 to prevent Error 400
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
