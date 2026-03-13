@@ -1,5 +1,6 @@
 import json
 from groq import Groq
+import time
 from sozo.core.config import get_groq_api_key
 
 def _get_client():
@@ -31,8 +32,54 @@ def format_notes_to_markdown(raw_text: str) -> str:
     except Exception as e:
         raise RuntimeError(f"AI Formatting failed: {e}")
     
+def _summarize_chunk(chunk: str) -> str:
+    """Helper function to summarize a small piece of a massive diff."""
+    client = _get_client()
+    prompt = f"""
+    Briefly summarize the changes in this git diff chunk. 
+    Keep it under 2 sentences. Focus on what was added, modified, or deleted.
+    
+    Diff chunk:
+    {chunk}
+    """
+    try:
+        response = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama-3.1-8b-instant",
+            temperature=0.2,
+            max_tokens=100,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception:
+        return "[Unreadable chunk]"
+
 def generate_commit_message(diff: str) -> str:
     client = _get_client()
+    
+    # --- THE MAP-REDUCE CHUNKING ENGINE ---
+    max_chunk_size = 12000
+    
+    if len(diff) > max_chunk_size:
+        # 1. Map: Split the massive diff into manageable chunks
+        chunks = [diff[i:i + max_chunk_size] for i in range(0, len(diff), max_chunk_size)]
+        summaries = []
+        
+        for i, chunk in enumerate(chunks):
+            # Cap at 5 chunks (60,000 chars) to prevent API rate limits on free tier
+            if i >= 5: 
+                summaries.append("... (diff too massive, remaining chunks ignored)")
+                break
+            
+            summaries.append(f"- {i+1}: " + _summarize_chunk(chunk))
+            time.sleep(1) # Prevent Groq API rate-limiting
+            
+        # 2. Reduce: Combine the summaries to pass to the final prompt
+        diff_context = "COMBINED SUMMARIES OF MASSIVE CHANGES:\n" + "\n".join(summaries)
+    else:
+        # Normal flow for small diffs
+        diff_context = f"Git diff:\n{diff}"
+
+    # --- THE FINAL PROMPT ---
     prompt = f"""
     You are an expert software engineer.
 
@@ -56,7 +103,7 @@ def generate_commit_message(diff: str) -> str:
     No quotes.
 
     Git diff:
-    {diff}
+    {diff_context}
     """
     try:
         response = client.chat.completions.create(

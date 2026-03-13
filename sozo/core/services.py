@@ -227,8 +227,8 @@ def execute_auto_commit(custom_msg=None):
     if custom_msg:
         commit_msg = custom_msg
     else:
-        truncated_diff = diff[:15000] if len(diff) > 15000 else diff
-        commit_msg = generate_commit_message(truncated_diff)
+        # Pass the full, raw diff! The AI Map-Reduce engine handles the chunking now.
+        commit_msg = generate_commit_message(diff)
 
     process = subprocess.run(
         ["git", "commit", "-m", commit_msg],
