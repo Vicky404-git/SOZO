@@ -146,21 +146,21 @@ def parse_natural_language_event(text: str) -> dict:
         raise RuntimeError(f"AI parsing failed: {e}")
     
     
-def generate_updated_docs(cli_context: str, current_doc: str, doc_name: str) -> str:
+def generate_updated_docs(project_context: str, current_doc: str, doc_name: str) -> str:
     client = _get_client()
     prompt = f"""
-    You are an expert technical writer. I am providing you with the current source code of my CLI commands and the current contents of '{doc_name}'.
-    Your job is to update '{doc_name}' so it perfectly matches the CLI's current capabilities.
+    You are an expert technical writer. I am providing you with a structural skeleton of the project's source code and the current contents of '{doc_name}'.
+    Your job is to update '{doc_name}' so it perfectly matches the project's current capabilities.
     
     Rules:
-    1. Add sections for new commands found in the source code.
-    2. Update arguments, flags, and descriptions for changed commands.
+    1. Add sections for new features, functions, or capabilities found in the source code.
+    2. Update descriptions, arguments, or endpoints for changed logic.
     3. Preserve the exact tone, style, and formatting of the original document.
     4. Do NOT output any markdown code blocks (like ```markdown), just output the raw text.
     5. Do NOT add conversational filler (e.g., "Here is the updated text...").
     
-    CLI Source Code (The Source of Truth):
-    {cli_context}
+    Project Source Skeleton (The Source of Truth):
+    {project_context}
     
     Current {doc_name}:
     {current_doc}
@@ -169,7 +169,7 @@ def generate_updated_docs(cli_context: str, current_doc: str, doc_name: str) -> 
         response = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
             model="llama-3.1-8b-instant",
-            temperature=0.1, # Extremely low temperature so it doesn't hallucinate features
+            temperature=0.1, 
             max_tokens=4000,
         )
         return response.choices[0].message.content.strip()

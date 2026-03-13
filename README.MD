@@ -50,14 +50,8 @@ Sōzō has evolved from a simple logger into a deeply interconnected, AI-powered
 * **Commit:** Run `sozo commit` to commit changes to your Git repository. Use `--msg` to specify a custom commit message.
 * **Push:** Run `sozo push` to push changes to your remote Git repository.
 * **Git:** Run `sozo git` to manage your Git repository.
-* **Timeline:** Run `sozo timeline` to view your events organized by week, month, or year. Use `--tag` to filter by specific tags.
 * **Note:** Run `sozo note` to create a new note with customizable metadata and tags.
-* **File:** Run `sozo file` to view a list of files.
 * **Ingest:** Run `sozo ingest` to import raw text into your vault. Use `--title` to specify the title, `--category` to specify the category, and `--tag` to assign tags.
-* **Graph:** Run `sozo graph` to visualize your knowledge graph as a Mermaid.js network diagram. Use `--export` to save the graph as a 2D image.
-* **Dash:** Run `sozo dash` to turn your terminal into a Notion-style split-screen dashboard showing stats, today's actions, and your timeline feed.
-* **Log:** Run `sozo log` to log actions using natural language and AI.
-* **Docs:** Run `sozo docs` to auto-update your Markdown documentation files using AI.
 
 ---
 

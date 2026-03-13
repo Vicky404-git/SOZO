@@ -407,11 +407,7 @@ def build_concept(keyword: str) -> dict:
     return concept_data
 
 # --------------------------------------------------
-# AUTO DOCUMENTATION
-# --------------------------------------------------
-
-# --------------------------------------------------
-# AUTO DOCUMENTATION
+# AUTO DOCUMENTATION (UNIVERSAL PROJECT SYNC)
 # --------------------------------------------------
 
 def sync_documentation():
@@ -419,38 +415,48 @@ def sync_documentation():
     import time
     from pathlib import Path
     
-    # 1. Find the project root and read the commands.py file
-    root_dir = Path(__file__).resolve().parent.parent.parent
-    commands_file = root_dir / "sozo" / "cli" / "commands.py"
+    # 1. Use the Current Working Directory (Where you ran the command!)
+    root_dir = Path.cwd()
     
-    if not commands_file.exists():
-        raise FileNotFoundError("Could not find commands.py to read CLI context.")
-        
-    with open(commands_file, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-        
-    # --- THE SKELETON EXTRACTOR ---
-    # Strips out all internal python logic to save API tokens!
+    # 2. The Universal Skeleton Extractor
+    # Scans Python, Java, and JS/TS files to map the project's capabilities!
     skeleton = []
-    capture = False
-    for line in lines:
-        stripped = line.strip()
-        if stripped.startswith("@app.command"):
-            capture = True
-            skeleton.append(f"\n{stripped}")
-        elif capture:
-            skeleton.append(stripped)
-            # Stop capturing when the function arguments end
-            if stripped.endswith("):"):
-                capture = False
+    valid_extensions = [".py", ".java", ".js", ".ts"]
+    
+    for filepath in root_dir.rglob("*"):
+        if filepath.suffix not in valid_extensions:
+            continue
+            
+        # Skip virtual environments, node_modules, and hidden folders
+        if any(part.startswith('.') or part in ["venv", "env", "__pycache__", "node_modules", "build", "target"] for part in filepath.parts):
+            continue
+            
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                lines = f.readlines()
                 
-    cli_context = "\n".join(skeleton)
+            file_context = [f"\n--- File: {filepath.name} ---"]
+            for line in lines:
+                stripped = line.strip()
+                # Capture functions, classes, and decorators/annotations across languages
+                if stripped.startswith(("def ", "class ", "@", "public ", "private ", "function ", "export ")):
+                    file_context.append(stripped)
+                    
+            if len(file_context) > 1: # Only add if we found actual code structures
+                skeleton.extend(file_context)
+        except Exception:
+            continue
+            
+    if not skeleton:
+        raise FileNotFoundError(f"Could not find any code files in {root_dir.name} to read context from.")
+        
+    project_context = "\n".join(skeleton)
     # ------------------------------
     
     docs_to_sync = ["MANUAL.md", "EXAMPLE.md", "README.md"]
     updated_files = []
     
-    # 2. Loop through each doc and ask AI to update it
+    # 3. Loop through docs in the CURRENT folder
     for doc_name in docs_to_sync:
         doc_path = root_dir / doc_name
         if not doc_path.exists():
@@ -461,7 +467,7 @@ def sync_documentation():
             
         # Call the AI safely
         try:
-            new_content = generate_updated_docs(cli_context, current_content, doc_name)
+            new_content = generate_updated_docs(project_context, current_content, doc_name)
         except Exception as e:
             print(f"\n[yellow]Skipping {doc_name} due to API rate limits. ({e})[/yellow]")
             continue
@@ -474,13 +480,12 @@ def sync_documentation():
         if new_content.endswith("```"):
             new_content = new_content[:-3]
             
-        # 3. Safely overwrite the file
+        # Safely overwrite the file
         with open(doc_path, "w", encoding="utf-8") as f:
             f.write(new_content.strip() + "\n")
             
         updated_files.append(doc_name)
         
-        # Pause for 20 seconds to let the Groq 6000 TPM limit recover between files
         print(f"[dim]Synced {doc_name}... waiting 20s for Groq API cooldown...[/dim]")
         time.sleep(20) 
         
@@ -490,7 +495,7 @@ def sync_documentation():
         insert_event(
             datetime.now().isoformat(),
             "programming",
-            f"Auto-synced documentation: {', '.join(updated_files)}",
+            f"Auto-synced documentation for project: {root_dir.name}",
             datetime.now().isoformat(),
             0,
             "docs,ai,SOZO",
