@@ -90,3 +90,18 @@ For when you want complete, rigid control over your logs.
   *(Start the background watcher in a separate terminal tab. It will ping you when a future event, created via `sozo add --at "3pm" --remind`, is due).*
 * **Manual:** `sozo manual`
   *(Opens the MANUAL.md file in your default editor).*
+
+---
+
+## 8. Additional Commands
+* **Timeline for a Specific Period:** `sozo timeline PERIOD` (e.g., `sozo timeline week`)
+* **Timeline for a Specific Tag:** `sozo timeline -t TAG`
+* **Note with a Specific Title:** `sozo note TITLE [-c CATEGORY] [-t TAG]`
+* **Ingest a Raw Text File:** `sozo ingest RAW_FILE.TXT [-c CATEGORY] [-t TAG]`
+* **Graph with Export Option:** `sozo graph --export`
+* **Dashboard with Custom Data:** `sozo dash [-t TAG]`
+* **Smart Log with Multiple Sentences:** `sozo log "sentence 1" "sentence 2" ...`
+* **Auto Docs with Sync Option:** `sozo docs --sync`
+* **File History with a Specific File:** `sozo file FILENAME`
+* **Auto Commit with a Custom Message:** `sozo commit -m MESSAGE`
+* **Git Passthrough with Custom Commands:** `sozo git [COMMAND]`

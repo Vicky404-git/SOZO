@@ -410,9 +410,14 @@ def build_concept(keyword: str) -> dict:
 # AUTO DOCUMENTATION
 # --------------------------------------------------
 
+# --------------------------------------------------
+# AUTO DOCUMENTATION
+# --------------------------------------------------
+
 def sync_documentation():
     from sozo.core.ai import generate_updated_docs
     import time
+    from pathlib import Path
     
     # 1. Find the project root and read the commands.py file
     root_dir = Path(__file__).resolve().parent.parent.parent
@@ -422,8 +427,26 @@ def sync_documentation():
         raise FileNotFoundError("Could not find commands.py to read CLI context.")
         
     with open(commands_file, "r", encoding="utf-8") as f:
-        cli_context = f.read()
+        lines = f.readlines()
         
+    # --- THE SKELETON EXTRACTOR ---
+    # Strips out all internal python logic to save API tokens!
+    skeleton = []
+    capture = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("@app.command"):
+            capture = True
+            skeleton.append(f"\n{stripped}")
+        elif capture:
+            skeleton.append(stripped)
+            # Stop capturing when the function arguments end
+            if stripped.endswith("):"):
+                capture = False
+                
+    cli_context = "\n".join(skeleton)
+    # ------------------------------
+    
     docs_to_sync = ["MANUAL.md", "EXAMPLE.md", "README.md"]
     updated_files = []
     
@@ -436,10 +459,14 @@ def sync_documentation():
         with open(doc_path, "r", encoding="utf-8") as f:
             current_content = f.read()
             
-        # Call the AI!
-        new_content = generate_updated_docs(cli_context, current_content, doc_name)
-        
-        # Cleanup: Sometimes Llama-3 wraps the whole response in ```markdown
+        # Call the AI safely
+        try:
+            new_content = generate_updated_docs(cli_context, current_content, doc_name)
+        except Exception as e:
+            print(f"\n[yellow]Skipping {doc_name} due to API rate limits. ({e})[/yellow]")
+            continue
+            
+        # Cleanup markdown formatting
         if new_content.startswith("```markdown"):
             new_content = new_content.replace("```markdown", "", 1)
         if new_content.startswith("```"):
@@ -452,7 +479,10 @@ def sync_documentation():
             f.write(new_content.strip() + "\n")
             
         updated_files.append(doc_name)
-        time.sleep(2) # Pause for 2 seconds to avoid Groq rate limits
+        
+        # Pause for 20 seconds to let the Groq 6000 TPM limit recover between files
+        print(f"[dim]Synced {doc_name}... waiting 20s for Groq API cooldown...[/dim]")
+        time.sleep(20) 
         
     # 4. Log the action to Sōzō!
     if updated_files:
