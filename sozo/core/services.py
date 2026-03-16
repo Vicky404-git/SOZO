@@ -336,8 +336,8 @@ def search_vault(keyword: str) -> dict:
 # NOTE CREATION
 # --------------------------------------------------
 
-def create_note(title: str, category: str, tags: list[str] = None):
-    return _save_to_vault(title, category, tags, "", "Created note")
+def create_note(title: str, category: str, tags: list[str] = None, content: str = ""):
+    return _save_to_vault(title, category, tags, content, "Created note")
 
 
 def ingest_raw_file(txt_filepath: str, title: str, category: str, tags: list = None):

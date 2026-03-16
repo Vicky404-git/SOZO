@@ -308,30 +308,141 @@ def register_commands(app: typer.Typer):
         display_timeline(get_timeline(period, tag), f"{period.capitalize()} Timeline{title_suffix}")
 
     # ------------------------------------------------
-    # NOTE
+    # NOTE (UI EDITOR & GUIDED CREATOR)
     # ------------------------------------------------
     @app.command()
     def note(
-        title: str,
-        category: str = typer.Option("study", "--category", "-c"),
+        title: str = typer.Argument(None, help="Optional title of the note"),
+        category: str = typer.Option(None, "--category", "-c"),
         tags: list[str] = typer.Option(None, "--tag", "-t"),
     ):
-
         from sozo.core.services import create_note
-
+        from rich.prompt import Prompt
+        from datetime import datetime
+        import click
+        
+        print("[bold cyan]📝 Sōzō Notebook[/bold cyan]")
+        
+        # 1. Guided Prompts for Normal Users
+        if not title:
+            title = Prompt.ask("[bold yellow]What is the title of this note?[/bold yellow]")
+            if not title:
+                title = f"Note {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+                
+        if not category:
+            # Provide a sensible default so they can just press Enter
+            category = Prompt.ask("[bold yellow]Category (e.g., journal, ideas, recipe)[/bold yellow]", default="journal")
+            
+        if not tags:
+            raw_tags = Prompt.ask("[bold yellow]Tags (comma separated, or press Enter to skip)[/bold yellow]", default="")
+            tags = [t.strip() for t in raw_tags.split(",")] if raw_tags else []
+                
+        print(f"\n[dim]Opening Editor for '{title}'...[/dim]")
+        print("[cyan]Write your thoughts, save (Ctrl+S), and close the window to auto-save.[/cyan]")
+        
+        # 2. Open the UI
+        content = click.edit()
+        
+        if content is None:
+            print("[yellow]Note creation cancelled.[/yellow]")
+            return
+            
         try:
-            print("[dim]Creating note...[/dim]")
-
-            filepath, final_tags = create_note(title, category, tags)
-
+            filepath, final_tags = create_note(title, category, tags, content.strip())
             tag_str = f" [cyan]#{', #'.join(final_tags)}[/cyan]" if final_tags else ""
-
-            print(f"[green]✔ Note created:[/green] {title}{tag_str}")
-
-            open_in_editor(filepath)
-
+            print(f"[green]✔ Note saved securely:[/green] {title}{tag_str}")
         except Exception as e:
-            print(f"[red]Error creating note:[/red] {e}")
+            print(f"[red]Error saving note:[/red] {e}")
+            
+    # ------------------------------------------------
+    # LIST ALL NOTES (THE BOOKSHELF)
+    # ------------------------------------------------
+    @app.command(name="notes")
+    def list_notes():
+        """View a table of contents of all your notes."""
+        from sozo.core.config import VAULT_PATH
+        from rich.table import Table
+        
+        table = Table(title="📚 Your Sōzō Notebooks", show_lines=True)
+        table.add_column("Date Created", style="dim")
+        table.add_column("Title", style="cyan")
+        table.add_column("Folder/Category", style="magenta")
+        
+        # Find all markdown files in the vault
+        notes = list(VAULT_PATH.rglob("*.md"))
+        
+        if not notes:
+            print("[yellow]Your notebook is currently empty. Try 'sozo note' to write something![/yellow]")
+            return
+            
+        # Sort them newest to oldest
+        for note in sorted(notes, reverse=True):
+            # Extract clean names from the filename (e.g., 20260316-my-poem.md)
+            parts = note.stem.split("-", 1)
+            date_str = parts[0] if len(parts) > 1 else "Unknown"
+            title_str = parts[1].replace("-", " ").title() if len(parts) > 1 else note.stem
+            
+            table.add_row(date_str, title_str, note.parent.name)
+            
+        console.print(table)
+            
+    # ------------------------------------------------
+    # READ NOTE
+    # ------------------------------------------------
+    @app.command()
+    def read(filename: str = typer.Argument(..., help="Part of the note's title to read")):
+        """Read a note directly in your terminal."""
+        from sozo.core.config import VAULT_PATH
+        from rich.markdown import Markdown
+        
+        found = list(VAULT_PATH.rglob(f"*{filename}*.md"))
+        
+        if not found:
+            print(f"[red]Could not find any note matching '{filename}'[/red]")
+            return
+            
+        filepath = found[0]
+        
+        with open(filepath, "r", encoding="utf-8") as f:
+            md_content = f.read()
+            
+        # Use Rich to render the markdown beautifully
+        console.print(f"\n[dim]Reading: {filepath.name}[/dim]\n")
+        console.print(Markdown(md_content))
+        print()
+    
+    # ------------------------------------------------
+    # REWRITE (EDIT EXISTING NOTES)
+    # ------------------------------------------------
+    @app.command()
+    def rewrite(filename: str = typer.Argument(..., help="Part of the filename to edit")):
+        """Open an existing vault note to edit and update it."""
+        from sozo.core.config import VAULT_PATH
+        import click
+        
+        # 1. Search the vault for the file
+        found = list(VAULT_PATH.rglob(f"*{filename}*.md"))
+        if not found:
+            print(f"[red]Could not find any note matching '{filename}'[/red]")
+            return
+            
+        filepath = found[0]
+        print(f"[dim]Opening {filepath.name}...[/dim]")
+        
+        # 2. Read the current text
+        with open(filepath, "r", encoding="utf-8") as f:
+            current_content = f.read()
+            
+        # 3. Open the UI Editor WITH the current text pre-loaded!
+        new_content = click.edit(current_content)
+        
+        # 4. Save it if they made changes
+        if new_content is not None:
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(new_content)
+            print(f"[green]✔ Note updated:[/green] {filepath.name}")
+        else:
+            print("[dim]No changes made. Note closed.[/dim]")
 
 
     # ------------------------------------------------
