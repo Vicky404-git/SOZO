@@ -18,8 +18,6 @@ Sōzō records **actions instead of documents**.
 
 Think of it like **Git for your life timeline.**
 
----
-
 # 🚀 The Core Idea
 
 Everything in Sōzō is an **Event**.
@@ -36,8 +34,6 @@ Metadata: #python #sozo 🔗 linked to #14
 ```
 
 Each event becomes part of your **life timeline database**.
-
----
 
 # ⚡ Features
 
@@ -57,8 +53,6 @@ AI extracts:
 * action
 * tags
 
----
-
 ### Concept Engine
 
 Unify notes, events, and projects into a **single concept node**.
@@ -73,8 +67,6 @@ Shows connections between:
 * projects
 * events
 
----
-
 ### Deep Brain Search
 
 Search inside your **entire Markdown vault**.
@@ -82,8 +74,6 @@ Search inside your **entire Markdown vault**.
 ```
 sozo brain "architecture"
 ```
-
----
 
 ### Knowledge Vault
 
@@ -99,8 +89,6 @@ Compatible with:
 * Notion
 * any Markdown system
 
----
-
 ### AI Auto-Ingestion
 
 Convert messy raw text into structured Markdown.
@@ -110,8 +98,6 @@ sozo ingest lecture.txt "Transformers Notes" -c study -t ai
 ```
 
 AI automatically formats the content.
-
----
 
 ### AI Git Workflows
 
@@ -129,8 +115,6 @@ sozo push
 
 Sōzō logs the commit to your event timeline.
 
----
-
 ### Command Center Dashboard
 
 Turn your terminal into a **personal activity dashboard**.
@@ -144,8 +128,6 @@ Shows:
 * activity stats
 * today's actions
 * recent timeline
-
----
 
 ### Timeline View
 
@@ -161,8 +143,6 @@ Filter by tag:
 sozo timeline week --tag python
 ```
 
----
-
 ### Knowledge Graph
 
 Visualize note relationships.
@@ -177,8 +157,6 @@ Export as Mermaid graph:
 sozo graph --export
 ```
 
----
-
 ### File History
 
 View timeline events related to a file.
@@ -186,8 +164,6 @@ View timeline events related to a file.
 ```
 sozo file main.py
 ```
-
----
 
 ### Smart Git Command Wrapper
 
@@ -197,8 +173,6 @@ Run git commands through Sōzō and log them automatically.
 sozo git status
 sozo git pull
 ```
-
----
 
 ### Auto Documentation (AI)
 
@@ -210,7 +184,19 @@ sozo docs --sync
 
 AI scans the project code and rewrites docs.
 
----
+### Manual
+
+Open the full manual:
+
+```
+sozo manual
+```
+
+Or:
+
+```
+sozo --help
+```
 
 # 📦 Event Commands
 
@@ -236,23 +222,17 @@ Example:
 sozo add study "read AI paper" --tag ai --tag research
 ```
 
----
-
 ### Edit Event
 
 ```
 sozo edit 12 --value "updated algorithm"
 ```
 
----
-
 ### Delete Event
 
 ```
 sozo delete 12
 ```
-
----
 
 ### List Events
 
@@ -266,15 +246,11 @@ Filter by date:
 sozo list 2026-03-10
 ```
 
----
-
 ### Today's Events
 
 ```
 sozo today
 ```
-
----
 
 ### Search Events
 
@@ -282,15 +258,11 @@ sozo today
 sozo search "python"
 ```
 
----
-
 ### Activity Stats
 
 ```
 sozo stats
 ```
-
----
 
 ### Export Timeline
 
@@ -304,8 +276,6 @@ Filter by tag:
 sozo export --tag ai
 ```
 
----
-
 # ⏰ Reminder Engine (Kosmo)
 
 Run the reminder daemon:
@@ -316,38 +286,18 @@ sozo kosmo
 
 Kosmo watches your timeline and triggers reminders when events are due.
 
----
-
 # 🔄 Self Updating
 
 Update Sōzō from GitHub:
 
 ```
-sozo --update
+sozo update
 ```
 
 This will:
 
 * pull latest code
 * install new dependencies
-
----
-
-# 📖 Manual
-
-Open the full manual:
-
-```
-sozo manual
-```
-
-Or:
-
-```
-sozo --help
-```
-
----
 
 # 🛠 Installation
 
@@ -357,8 +307,6 @@ sozo --help
 git clone https://github.com/Vicky404-git/SOZO.git
 cd SOZO
 ```
-
----
 
 ### Create virtual environment
 
@@ -380,8 +328,6 @@ Linux / Mac
 source sozoenv/bin/activate
 ```
 
----
-
 ### Install dependencies
 
 ```
@@ -393,8 +339,6 @@ Install project:
 ```
 pip install -e .
 ```
-
----
 
 ### Setup AI features
 
@@ -410,8 +354,6 @@ Required for:
 * `sozo commit`
 * `sozo ingest`
 * `sozo docs`
-
----
 
 # 🏗 Architecture
 
@@ -441,9 +383,6 @@ Sōzō follows a layered architecture.
     │   SQLite DB  │
     └─────────────┘
 
-
----
-
 # 🗄 Database Architecture
 
 SQLite table: **events**
@@ -461,21 +400,15 @@ SQLite table: **events**
 | files      | TEXT                |
 | relates_to | INTEGER             |
 
----
-
 # 🗺 Roadmap
 
 ### DaemonV Integration
 
 Turn the reminder engine into a background OS service.
 
----
-
 ### AI Semantic Search
 
 Upgrade keyword search to vector embeddings using FAISS.
-
----
 
 ### Life Knowledge Graph
 
@@ -484,8 +417,6 @@ Expand the graph system to map relationships between:
 ```
 Events → Projects → Concepts
 ```
-
----
 
 # 👤 Author
 
