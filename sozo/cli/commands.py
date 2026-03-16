@@ -1,30 +1,53 @@
 import typer
 import subprocess
+import click
 from pathlib import Path
+from datetime import datetime
 from rich import print
+from rich.panel import Panel
+from rich.prompt import Prompt
+from rich.table import Table
+from rich.markdown import Markdown
 
+from sozo.core.config import VAULT_PATH
 from sozo.core.kosmo import start_kosmo
 from sozo.core.services import (
-    add_event,
-    list_events,
-    remove_event,
-    show_today,
-    search_events,
-    get_stats,
-    export_to_md,
+    add_event, edit_event, list_events, remove_event, show_today,
+    search_events, get_stats, export_to_md, search_vault,
+    build_concept, detect_project, get_file_history,
+    execute_auto_commit, get_timeline, create_note,
+    ingest_raw_file, build_knowledge_graph, log_natural_event,
+    sync_documentation
 )
 
 from sozo.cli.utils import (
-    display_events,
-    display_stats,
-    display_timeline,
-    display_graph,
-    display_dashboard,
-    open_in_editor,
-    console,
+    display_events, display_stats, display_timeline,
+    display_graph, display_dashboard, open_in_editor,
+    display_concept, export_mermaid_graph, console,
 )
 
 app = typer.Typer()
+
+
+# ================================================
+# CLI HELPERS (DRY PRINCIPLES)
+# ================================================
+
+def _get_note_path(filename: str) -> Path:
+    """Helper to find a note in the vault safely."""
+    found = list(VAULT_PATH.rglob(f"*{filename}*.md"))
+    if not found:
+        print(f"[red]Could not find any note matching '{filename}'[/red]")
+        raise typer.Exit()
+    return found[0]
+
+def _log_git_action(message: str):
+    """Helper to detect projects and log git commands."""
+    project = detect_project()
+    tags = ["git"]
+    if project:
+        tags.append(project)
+    add_event("programming", message, tags=tags)
 
 
 def register_commands(app: typer.Typer):
@@ -43,16 +66,13 @@ def register_commands(app: typer.Typer):
         relates_to: int = typer.Option(None, "--relates-to", "-r"),
     ):
         full_value = " ".join(value)
-
         try:
             final_tags = add_event(category, full_value, at, remind, tags, files, relates_to)
-
             tag_str = f" [cyan]#{', #'.join(final_tags)}[/cyan]" if final_tags else ""
             file_str = f" 📎 [dim]{', '.join(files)}[/dim]" if files else ""
             rel_str = f" 🔗 [magenta]Linked to #{relates_to}[/magenta]" if relates_to else ""
 
             print(f"[green]✔ Saved:[/green] {category} → {full_value}{tag_str}{file_str}{rel_str}")
-
         except Exception as e:
             print(f"[red]Error:[/red] {e}")
             
@@ -67,7 +87,6 @@ def register_commands(app: typer.Typer):
         tags: list[str] = typer.Option(None, "--tag", "-t"),
         files: list[str] = typer.Option(None, "--file", "-f"),
     ):
-        from sozo.core.services import edit_event
         try:
             edit_event(event_id, category, value, tags, files)
             print(f"[green]✔ Event {event_id} updated successfully![/green]")
@@ -79,10 +98,7 @@ def register_commands(app: typer.Typer):
     # EXPORT
     # ------------------------------------------------
     @app.command()
-    def export(
-        tag: str = typer.Option(None, "--tag", "-t"),
-        out: str = typer.Option("timeline.md", "--out", "-o"),
-    ):
+    def export(tag: str = typer.Option(None, "--tag", "-t"), out: str = typer.Option("timeline.md", "--out", "-o")):
         try:
             export_to_md(tag, out)
             print(f"[green]✔ Exported timeline to {out}[/green]")
@@ -91,69 +107,24 @@ def register_commands(app: typer.Typer):
 
 
     # ------------------------------------------------
-    # LIST
+    # LIST / TODAY / SEARCH / FILE / STATS
     # ------------------------------------------------
     @app.command(name="list")
     def list_cmd(date: str = None):
         display_events(list_events(date), "All Events")
 
-
-    # ------------------------------------------------
-    # TODAY
-    # ------------------------------------------------
     @app.command()
     def today():
         display_events(show_today(), "Today's Events")
 
-
-    # ------------------------------------------------
-    # SEARCH
-    # ------------------------------------------------
     @app.command()
     def search(query: str):
         display_events(search_events(query), f"Search Results for '{query}'")
         
-    # ------------------------------------------------
-    # BRAIN SEARCH (DEEP VAULT SEARCH)
-    # ------------------------------------------------
     @app.command()
-    def brain(keyword: str):
-        """Full-text search inside your Markdown vault notes."""
-        from sozo.core.services import search_vault
-        from rich.panel import Panel
+    def file(name: str):
+        display_events(get_file_history(name), f"History for '{name}'")
         
-        print(f"[dim]Scanning Second Brain for '{keyword}'...[/dim]")
-        results = search_vault(keyword)
-        
-        if not results:
-            print(f"[yellow]No notes found containing: '{keyword}'[/yellow]")
-            return
-            
-        print(f"\n[bold cyan]🧠 Second Brain Results ({len(results)} found)[/bold cyan]")
-        for filename, snippet in results.items():
-            # Highlight the keyword in the snippet
-            highlighted_snippet = snippet.replace(keyword, f"[bold green]{keyword}[/bold green]")
-            # Also handle capitalized versions
-            highlighted_snippet = highlighted_snippet.replace(keyword.capitalize(), f"[bold green]{keyword.capitalize()}[/bold green]")
-            
-            print(Panel(f"[dim]...{highlighted_snippet}...[/dim]", title=f"[magenta]📄 {filename}[/magenta]", title_align="left"))
-            
-    # ------------------------------------------------
-    # CONCEPT ENGINE
-    # ------------------------------------------------
-    @app.command()
-    def concept(keyword: str):
-        """Unify notes, events, and projects under a single Concept Node."""
-        from sozo.core.services import build_concept
-        from sozo.cli.utils import display_concept
-        
-        data = build_concept(keyword)
-        display_concept(keyword, data)
-
-
-    # ------------------------------------------------
-    # STATS
-    # ------------------------------------------------
     @app.command()
     def stats():
         display_stats(get_stats())
@@ -169,27 +140,32 @@ def register_commands(app: typer.Typer):
 
 
     # ------------------------------------------------
-    # KOSMO
+    # BRAIN SEARCH (DEEP VAULT SEARCH)
     # ------------------------------------------------
     @app.command()
-    def kosmo():
-        start_kosmo()
-
-
-    # ------------------------------------------------
-    # MANUAL
-    # ------------------------------------------------
-    @app.command()
-    def manual():
-
-        manual_path = Path(__file__).resolve().parent.parent.parent / "MANUAL.md"
-
-        if not manual_path.exists():
-            print("[red]MANUAL.md not found![/red]")
+    def brain(keyword: str):
+        """Full-text search inside your Markdown vault notes."""
+        print(f"[dim]Scanning Second Brain for '{keyword}'...[/dim]")
+        results = search_vault(keyword)
+        
+        if not results:
+            print(f"[yellow]No notes found containing: '{keyword}'[/yellow]")
             return
-
-        print("[green]Opening MANUAL.md...[/green]")
-        open_in_editor(manual_path)
+            
+        print(f"\n[bold cyan]🧠 Second Brain Results ({len(results)} found)[/bold cyan]")
+        for filename, snippet in results.items():
+            highlighted_snippet = snippet.replace(keyword, f"[bold green]{keyword}[/bold green]")
+            highlighted_snippet = highlighted_snippet.replace(keyword.capitalize(), f"[bold green]{keyword.capitalize()}[/bold green]")
+            print(Panel(f"[dim]...{highlighted_snippet}...[/dim]", title=f"[magenta]📄 {filename}[/magenta]", title_align="left"))
+            
+    # ------------------------------------------------
+    # CONCEPT ENGINE
+    # ------------------------------------------------
+    @app.command()
+    def concept(keyword: str):
+        """Unify notes, events, and projects under a single Concept Node."""
+        data = build_concept(keyword)
+        display_concept(keyword, data)
 
 
     # ------------------------------------------------
@@ -197,11 +173,7 @@ def register_commands(app: typer.Typer):
     # ------------------------------------------------
     @app.command()
     def commit(msg: str = typer.Option(None, "--msg", "-m")):
-
-        from sozo.core.services import execute_auto_commit
-
         try:
-            # Wrap the AI call in an animated spinner!
             with console.status("[bold cyan]Analyzing changes and consulting AI...[/bold cyan]", spinner="dots"):
                 commit_msg, files = execute_auto_commit(msg)
 
@@ -209,7 +181,6 @@ def register_commands(app: typer.Typer):
             print(f"📝 [bold]Message:[/bold] {commit_msg}")
             print(f"📎 [bold]Files:[/bold] {', '.join(files)}")
             print("[blue]✔ Logged to Sōzō timeline.[/blue]")
-
         except Exception as e:
             print(f"[red]Error:[/red] {e}")
             
@@ -220,42 +191,26 @@ def register_commands(app: typer.Typer):
     @app.command()
     def push():
         """Smart git push with branch confirmation."""
-        from sozo.core.services import detect_project, add_event
-        
-        # 1. Detect the current branch (main or master)
         try:
             result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True)
-            current_branch = result.stdout.strip()
-            if not current_branch:
-                current_branch = "master" # Fallback
+            current_branch = result.stdout.strip() or "master"
         except Exception:
             print("[red]Error: Not inside a valid git repository.[/red]")
             return
 
-        # 2. Ask the user (Y/N)
         is_default = current_branch in ["main", "master"]
         prompt_msg = f"Push to {current_branch} right?" if is_default else f"Push to current branch '{current_branch}'?"
         
-        # typer.confirm automatically handles the (Y/N) logic
         if typer.confirm(prompt_msg, default=True):
             target_branch = current_branch
         else:
-            # 3. If N, ask them to type the branch name
             target_branch = typer.prompt("Enter the branch name to push to")
 
         print(f"\n[dim]Executing: git push origin {target_branch}[/dim]")
-        
-        # 4. Execute the push
         push_result = subprocess.run(["git", "push", "origin", target_branch])
         
-        # 5. Log it to Sōzō if successful
         if push_result.returncode == 0:
-            project = detect_project()
-            tags = ["git"]
-            if project:
-                tags.append(project)
-
-            add_event("programming", f"Git Push: origin {target_branch}", tags=tags)
+            _log_git_action(f"Git Push: origin {target_branch}")
             print("[blue]✔ Push logged to Sōzō timeline.[/blue]")
         else:
             print("[red]✖ Git push failed. Check your remote and permissions.[/red]")
@@ -266,46 +221,31 @@ def register_commands(app: typer.Typer):
     # ------------------------------------------------
     @app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
     def git(ctx: typer.Context):
-
-        from sozo.core.services import detect_project
-
         if not ctx.args:
             print("[yellow]Please provide git commands.[/yellow]")
             return
 
         command_str = " ".join(ctx.args)
-
         print(f"[dim]Running: git {command_str}[/dim]")
         
         result = subprocess.run(["git"] + list(ctx.args))
-        
         if result.returncode == 0:
-
-            project = detect_project()
-
-            tags = ["git"]
-            if project:
-                tags.append(project)
-
-            add_event("programming", f"Git Execute: git {command_str}", tags=tags)
-
+            _log_git_action(f"Git Execute: git {command_str}")
             print("[blue]✔ Action logged to Sōzō[/blue]")
 
 
     # ------------------------------------------------
-    # TIMELINE
+    # TIMELINE & DASHBOARD
     # ------------------------------------------------
     @app.command()
-    def timeline(
-        period: str = typer.Argument("week"),
-        tag: str = typer.Option(None, "--tag", "-t", help="Filter timeline by tag")
-    ):
-
-        from sozo.core.services import get_timeline
-        from sozo.cli.utils import display_timeline
-
+    def timeline(period: str = typer.Argument("week"), tag: str = typer.Option(None, "--tag", "-t")):
         title_suffix = f" (#{tag})" if tag else ""
         display_timeline(get_timeline(period, tag), f"{period.capitalize()} Timeline{title_suffix}")
+
+    @app.command()
+    def dash():
+        display_dashboard(get_stats(), show_today(), get_timeline("week"))
+        
 
     # ------------------------------------------------
     # NOTE (UI EDITOR & GUIDED CREATOR)
@@ -316,21 +256,14 @@ def register_commands(app: typer.Typer):
         category: str = typer.Option(None, "--category", "-c"),
         tags: list[str] = typer.Option(None, "--tag", "-t"),
     ):
-        from sozo.core.services import create_note
-        from rich.prompt import Prompt
-        from datetime import datetime
-        import click
-        
         print("[bold cyan]📝 Sōzō Notebook[/bold cyan]")
         
-        # 1. Guided Prompts for Normal Users
         if not title:
             title = Prompt.ask("[bold yellow]What is the title of this note?[/bold yellow]")
             if not title:
                 title = f"Note {datetime.now().strftime('%Y-%m-%d %H:%M')}"
                 
         if not category:
-            # Provide a sensible default so they can just press Enter
             category = Prompt.ask("[bold yellow]Category (e.g., journal, ideas, recipe)[/bold yellow]", default="journal")
             
         if not tags:
@@ -340,9 +273,7 @@ def register_commands(app: typer.Typer):
         print(f"\n[dim]Opening Editor for '{title}'...[/dim]")
         print("[cyan]Write your thoughts, save (Ctrl+S), and close the window to auto-save.[/cyan]")
         
-        # 2. Open the UI
         content = click.edit()
-        
         if content is None:
             print("[yellow]Note creation cancelled.[/yellow]")
             return
@@ -355,105 +286,56 @@ def register_commands(app: typer.Typer):
             print(f"[red]Error saving note:[/red] {e}")
             
     # ------------------------------------------------
-    # LIST ALL NOTES (THE BOOKSHELF)
+    # BOOKSHELF & NOTE MANAGEMENT
     # ------------------------------------------------
     @app.command(name="notes")
     def list_notes():
         """View a table of contents of all your notes."""
-        from sozo.core.config import VAULT_PATH
-        from rich.table import Table
-        
         table = Table(title="📚 Your Sōzō Notebooks", show_lines=True)
         table.add_column("Date Created", style="dim")
         table.add_column("Title", style="cyan")
         table.add_column("Folder/Category", style="magenta")
         
-        # Find all markdown files in the vault
         notes = list(VAULT_PATH.rglob("*.md"))
-        
         if not notes:
             print("[yellow]Your notebook is currently empty. Try 'sozo note' to write something![/yellow]")
             return
             
-        # Sort them newest to oldest
         for note in sorted(notes, reverse=True):
-            # Extract clean names from the filename (e.g., 20260316-my-poem.md)
             parts = note.stem.split("-", 1)
             date_str = parts[0] if len(parts) > 1 else "Unknown"
             title_str = parts[1].replace("-", " ").title() if len(parts) > 1 else note.stem
-            
             table.add_row(date_str, title_str, note.parent.name)
             
         console.print(table)
             
-    # ------------------------------------------------
-    # READ NOTE
-    # ------------------------------------------------
     @app.command()
     def read(filename: str = typer.Argument(..., help="Part of the note's title to read")):
         """Read a note directly in your terminal."""
-        from sozo.core.config import VAULT_PATH
-        from rich.markdown import Markdown
-        
-        found = list(VAULT_PATH.rglob(f"*{filename}*.md"))
-        
-        if not found:
-            print(f"[red]Could not find any note matching '{filename}'[/red]")
-            return
-            
-        filepath = found[0]
-        
+        filepath = _get_note_path(filename)
         with open(filepath, "r", encoding="utf-8") as f:
             md_content = f.read()
             
-        # Use Rich to render the markdown beautifully
         console.print(f"\n[dim]Reading: {filepath.name}[/dim]\n")
         console.print(Markdown(md_content))
         print()
     
-    # ------------------------------------------------
-    # REWRITE (EDIT EXISTING NOTES)
-    # ------------------------------------------------
     @app.command()
     def rewrite(filename: str = typer.Argument(..., help="Part of the filename to edit")):
         """Open an existing vault note to edit and update it."""
-        from sozo.core.config import VAULT_PATH
-        import click
-        
-        # 1. Search the vault for the file
-        found = list(VAULT_PATH.rglob(f"*{filename}*.md"))
-        if not found:
-            print(f"[red]Could not find any note matching '{filename}'[/red]")
-            return
-            
-        filepath = found[0]
+        filepath = _get_note_path(filename)
         print(f"[dim]Opening {filepath.name}...[/dim]")
         
-        # 2. Read the current text
         with open(filepath, "r", encoding="utf-8") as f:
             current_content = f.read()
             
-        # 3. Open the UI Editor WITH the current text pre-loaded!
         new_content = click.edit(current_content)
-        
-        # 4. Save it if they made changes
         if new_content is not None:
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(new_content)
             print(f"[green]✔ Note updated:[/green] {filepath.name}")
         else:
             print("[dim]No changes made. Note closed.[/dim]")
-
-
-    # ------------------------------------------------
-    # FILE HISTORY
-    # ------------------------------------------------
-    @app.command()
-    def file(name: str):
-
-        from sozo.core.services import get_file_history
-
-        display_events(get_file_history(name), f"History for '{name}'")
 
 
     # ------------------------------------------------
@@ -466,18 +348,13 @@ def register_commands(app: typer.Typer):
         category: str = typer.Option("study", "--category", "-c"),
         tags: list[str] = typer.Option(None, "--tag", "-t"),
     ):
-
-        from sozo.core.services import ingest_raw_file
-
         try:
-            # Wrap the AI formatting in an animated spinner!
             with console.status(f"[bold magenta]Reading {txt_file} and querying AI...[/bold magenta]", spinner="bouncingBar"):
                 filepath, final_tags = ingest_raw_file(txt_file, title, category, tags)
 
             tag_str = f" [cyan]#{', #'.join(final_tags)}[/cyan]" if final_tags else ""
             print(f"[green]✔ AI formatting complete:[/green] {title}{tag_str}")
             open_in_editor(filepath)
-
         except Exception as e:
             print(f"[red]Failed to ingest file:[/red] {e}")
 
@@ -486,24 +363,11 @@ def register_commands(app: typer.Typer):
     # ------------------------------------------------
     @app.command()
     def graph(export: bool = typer.Option(False, "--export", "-e", help="Export as 2D Mermaid Network Graph")):
-        from sozo.core.services import build_knowledge_graph
-        from sozo.cli.utils import display_graph, export_mermaid_graph
-        
         graph_data = build_knowledge_graph()
         if export:
             export_mermaid_graph(graph_data)
         else:
             display_graph(graph_data)
-
-    # ------------------------------------------------
-    # DASHBOARD
-    # ------------------------------------------------
-    @app.command()
-    def dash():
-        from sozo.core.services import get_stats, show_today, get_timeline
-        from sozo.cli.utils import display_dashboard
-        
-        display_dashboard(get_stats(), show_today(), get_timeline("week"))
         
     # ------------------------------------------------
     # SMART LOG (AI)
@@ -511,8 +375,6 @@ def register_commands(app: typer.Typer):
     @app.command()
     def log(text: list[str]):
         """Smart log using Natural Language and AI."""
-        from sozo.core.services import log_natural_event
-        
         full_text = " ".join(text)
         if not full_text:
             print("[yellow]Please provide some text to log.[/yellow]")
@@ -537,8 +399,6 @@ def register_commands(app: typer.Typer):
             print("[yellow]Use 'sozo docs --sync' to auto-update your documentation files based on current code.[/yellow]")
             return
             
-        from sozo.core.services import sync_documentation
-        
         try:
             with console.status("[bold magenta]🤖 AI is reading your code and rewriting docs...[/bold magenta]", spinner="point"):
                 updated = sync_documentation()
@@ -550,3 +410,19 @@ def register_commands(app: typer.Typer):
                 print("[yellow]No documentation files found to update.[/yellow]")
         except Exception as e:
             print(f"[red]Error syncing docs:[/red] {e}")
+
+    # ------------------------------------------------
+    # MISC
+    # ------------------------------------------------
+    @app.command()
+    def kosmo():
+        start_kosmo()
+
+    @app.command()
+    def manual():
+        manual_path = Path(__file__).resolve().parent.parent.parent / "MANUAL.md"
+        if not manual_path.exists():
+            print("[red]MANUAL.md not found![/red]")
+            return
+        print("[green]Opening MANUAL.md...[/green]")
+        open_in_editor(manual_path)
