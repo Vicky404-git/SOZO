@@ -253,7 +253,10 @@ def execute_release(version: str) -> str:
     
     # 1. Find the last git tag to know where to start scanning
     try:
-        last_tag_proc = subprocess.run(["git", "describe", "--tags", "--abbrev=0"], capture_output=True, text=True)
+        last_tag_proc = subprocess.run(
+            ["git", "describe", "--tags", "--abbrev=0"], 
+            capture_output=True, text=True, encoding="utf-8" # <-- ADDED ENCODING
+        )
         last_tag = last_tag_proc.stdout.strip()
     except Exception:
         last_tag = ""
@@ -264,7 +267,10 @@ def execute_release(version: str) -> str:
     else:
         log_cmd = ["git", "log", "--oneline"]
         
-    log_proc = subprocess.run(log_cmd, capture_output=True, text=True)
+    log_proc = subprocess.run(
+        log_cmd, 
+        capture_output=True, text=True, encoding="utf-8" # <-- ADDED ENCODING
+    )
     commits = log_proc.stdout.strip()
     
     if not commits:
@@ -274,12 +280,18 @@ def execute_release(version: str) -> str:
     release_notes = generate_release_notes(commits, version)
 
     # 4. Create the Git Tag using the AI's notes as the message
-    tag_proc = subprocess.run(["git", "tag", "-a", version, "-m", release_notes], capture_output=True, text=True)
+    tag_proc = subprocess.run(
+        ["git", "tag", "-a", version, "-m", release_notes], 
+        capture_output=True, text=True, encoding="utf-8" # <-- ADDED ENCODING
+    )
     if tag_proc.returncode != 0:
         raise RuntimeError(f"Failed to create git tag: {tag_proc.stderr}")
 
     # 5. Push the new tag to GitHub
-    push_proc = subprocess.run(["git", "push", "origin", version], capture_output=True, text=True)
+    subprocess.run(
+        ["git", "push", "origin", version], 
+        capture_output=True, text=True, encoding="utf-8" # <-- ADDED ENCODING
+    )
     
     # 6. Log it to Sōzō
     project = detect_project()

@@ -202,7 +202,7 @@ def register_commands(app: typer.Typer):
             print("[blue]✔ Push logged to Sōzō timeline.[/blue]")
         else:
             print("[red]✖ Git push failed. Check your remote and permissions.[/red]")
-            
+
     # ------------------------------------------------
     # RELEASE
     # ------------------------------------------------
