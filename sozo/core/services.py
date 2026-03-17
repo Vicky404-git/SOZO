@@ -303,6 +303,22 @@ def execute_release(version: str) -> str:
     
     return release_notes
 
+def undo_release(version: str):
+    # 1. Delete the local tag
+    local_proc = subprocess.run(["git", "tag", "-d", version], capture_output=True, text=True, encoding="utf-8")
+    
+    # 2. Delete the remote tag from GitHub
+    remote_proc = subprocess.run(["git", "push", "--delete", "origin", version], capture_output=True, text=True, encoding="utf-8")
+    
+    # 3. Scrub it from the Sōzō Database
+    events = search_events_in_db(f"Released version {version}")
+    for event in events:
+        # event[0] is the ID, event[5] are the tags
+        if event[5] and "release" in event[5]:
+            delete_event(event[0])
+            
+    return local_proc.returncode == 0 or remote_proc.returncode == 0
+
 # --------------------------------------------------
 # TIMELINE
 # --------------------------------------------------

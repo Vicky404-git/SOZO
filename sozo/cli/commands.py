@@ -224,6 +224,25 @@ def register_commands(app: typer.Typer):
             print("\n[dim]✔ Action logged to Sōzō timeline.[/dim]")
         except Exception as e:
             print(f"[red]Error:[/red] {e}")
+            
+    
+    # ------------------------------------------------
+    # UNDO RELEASE
+    # ------------------------------------------------
+    @app.command()
+    def unrelease(version: str = typer.Argument(..., help="Version number to undo (e.g., v0.3.0)")):
+        """Undo a release: delete local/remote tags and scrub Sōzō logs."""
+        if not version.startswith("v"):
+            version = f"v{version}"
+
+        try:
+            with console.status(f"[bold red]Rolling back release {version}...[/bold red]", spinner="dots"):
+                undo_release(version)
+
+            print(f"\n[green]✔ Successfully scrubbed {version} from Git and GitHub![/green]")
+            print("[dim]✔ Event removed from Sōzō timeline.[/dim]")
+        except Exception as e:
+            print(f"[red]Error:[/red] {e}")
 
     # ------------------------------------------------
     # PASS THROUGH GIT
