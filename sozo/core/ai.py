@@ -155,3 +155,22 @@ Current {name}:
         temp=0.1,
         tokens=3500,
     )
+    
+    
+# ---------- Release Notes Generator ----------
+
+def generate_release_notes(commits: str, version: str) -> str:
+    prompt = f"""
+You are an expert open-source maintainer.
+Write professional Release Notes for version {version} based on the following git commits.
+
+Rules:
+- Group the changes into categories like 🚀 Features, 🐛 Bug Fixes, 🛠️ Maintenance, and 📚 Docs.
+- Translate technical commit jargon into clear, user-facing descriptions.
+- Output ONLY the markdown text for the release notes.
+- No conversational filler.
+
+Commits:
+{commits}
+"""
+    return _ai(prompt, tokens=1000)

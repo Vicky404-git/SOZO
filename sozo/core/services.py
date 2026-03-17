@@ -248,6 +248,48 @@ def execute_auto_commit(custom_msg=None):
     add_event("programming", f"Git Commit: {commit_msg}", tags=tags, files=files)
     return commit_msg, files
 
+def execute_release(version: str) -> str:
+    from sozo.core.ai import generate_release_notes
+    
+    # 1. Find the last git tag to know where to start scanning
+    try:
+        last_tag_proc = subprocess.run(["git", "describe", "--tags", "--abbrev=0"], capture_output=True, text=True)
+        last_tag = last_tag_proc.stdout.strip()
+    except Exception:
+        last_tag = ""
+
+    # 2. Get all commits since the last tag (or all commits if no tags exist)
+    if last_tag:
+        log_cmd = ["git", "log", f"{last_tag}..HEAD", "--oneline"]
+    else:
+        log_cmd = ["git", "log", "--oneline"]
+        
+    log_proc = subprocess.run(log_cmd, capture_output=True, text=True)
+    commits = log_proc.stdout.strip()
+    
+    if not commits:
+        raise ValueError("No new commits found to release since the last tag.")
+
+    # 3. Ask the AI to write the Release Notes
+    release_notes = generate_release_notes(commits, version)
+
+    # 4. Create the Git Tag using the AI's notes as the message
+    tag_proc = subprocess.run(["git", "tag", "-a", version, "-m", release_notes], capture_output=True, text=True)
+    if tag_proc.returncode != 0:
+        raise RuntimeError(f"Failed to create git tag: {tag_proc.stderr}")
+
+    # 5. Push the new tag to GitHub
+    push_proc = subprocess.run(["git", "push", "origin", version], capture_output=True, text=True)
+    
+    # 6. Log it to Sōzō
+    project = detect_project()
+    tags = ["git", "release"]
+    if project:
+        tags.append(project)
+        
+    add_event("programming", f"Released version {version}", tags=tags)
+    
+    return release_notes
 
 # --------------------------------------------------
 # TIMELINE

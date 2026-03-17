@@ -11,20 +11,8 @@ from rich.markdown import Markdown
 
 from sozo.core.config import VAULT_PATH
 from sozo.core.kosmo import start_kosmo
-from sozo.core.services import (
-    add_event, edit_event, list_events, remove_event, show_today,
-    search_events, get_stats, export_to_md, search_vault,
-    build_concept, detect_project, get_file_history,
-    execute_auto_commit, get_timeline, create_note,
-    ingest_raw_file, build_knowledge_graph, log_natural_event,
-    sync_documentation
-)
-
-from sozo.cli.utils import (
-    display_events, display_stats, display_timeline,
-    display_graph, display_dashboard, open_in_editor,
-    display_concept, export_mermaid_graph, console,
-)
+from sozo.core.services import *
+from sozo.cli.utils import *
 
 app = typer.Typer()
 
@@ -214,7 +202,28 @@ def register_commands(app: typer.Typer):
             print("[blue]✔ Push logged to Sōzō timeline.[/blue]")
         else:
             print("[red]✖ Git push failed. Check your remote and permissions.[/red]")
+            
+    # ------------------------------------------------
+    # RELEASE
+    # ------------------------------------------------
+    @app.command()
+    def release(version: str = typer.Argument(..., help="Version number (e.g., v1.0.0)")):
+        """Generate AI release notes, tag the repo, and push."""
+        # Ensure the version starts with a 'v' (best practice)
+        if not version.startswith("v"):
+            version = f"v{version}"
 
+        try:
+            with console.status(f"[bold cyan]Scanning git history and writing release notes for {version}...[/bold cyan]", spinner="dots"):
+                notes = execute_release(version)
+
+            print(f"\n[green]✔ Successfully created and pushed tag {version}![/green]\n")
+            
+            # Print the AI's release notes beautifully in the terminal
+            console.print(Panel(Markdown(notes), title=f"[bold blue]📦 Release Notes: {version}[/bold blue]", border_style="blue"))
+            print("\n[dim]✔ Action logged to Sōzō timeline.[/dim]")
+        except Exception as e:
+            print(f"[red]Error:[/red] {e}")
 
     # ------------------------------------------------
     # PASS THROUGH GIT
