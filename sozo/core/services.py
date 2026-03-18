@@ -490,17 +490,23 @@ def sync_documentation():
     
     # 2. The Universal Skeleton Extractor
     # Scans Python, Java, and JS/TS files to map the project's capabilities!
+    # 2. The Universal Skeleton Extractor
     skeleton = []
     valid_extensions = [".py", ".java", ".js", ".ts"]
     
+    # Gather all valid files first
+    valid_files = []
     for filepath in root_dir.rglob("*"):
         if filepath.suffix not in valid_extensions:
             continue
-            
-        # Skip virtual environments, node_modules, and hidden folders
         if any(part.startswith('.') or part in ["venv", "env", "__pycache__", "node_modules", "build", "target"] for part in filepath.parts):
             continue
-            
+        valid_files.append(filepath)
+        
+    # NEW: Sort files so user-facing commands/main files are read FIRST!
+    valid_files.sort(key=lambda p: 0 if p.stem.lower() in ["commands", "cli", "app", "main"] else 1)
+    
+    for filepath in valid_files:
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 lines = f.readlines()
@@ -508,11 +514,10 @@ def sync_documentation():
             file_context = [f"\n--- File: {filepath.name} ---"]
             for line in lines:
                 stripped = line.strip()
-                # Capture functions, classes, and decorators/annotations across languages
                 if stripped.startswith(("def ", "class ", "@", "public ", "private ", "function ", "export ")):
                     file_context.append(stripped)
                     
-            if len(file_context) > 1: # Only add if we found actual code structures
+            if len(file_context) > 1:
                 skeleton.extend(file_context)
         except Exception:
             continue

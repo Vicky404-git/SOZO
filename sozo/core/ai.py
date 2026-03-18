@@ -132,15 +132,15 @@ Text: "{text}"
 
 def generate_updated_docs(context: str, doc: str, name: str) -> str:
     prompt = f"""
-Update '{name}' so it matches the project source.
+You are an aggressive technical writer. Update '{name}' so it perfectly matches the project source.
 
 Rules:
-- Add missing features
-- Update changed logic
-- Preserve formatting
-- Output full document
-- No markdown code blocks
-- No filler text
+- YOU MUST add brand new sections for any new commands or features found in the Project Source.
+- Update changed logic.
+- Preserve the original formatting and style.
+- Output the full, complete document from start to finish.
+- No markdown code blocks wrapping the output.
+- No filler text (do not say "Here is the updated file").
 
 Project Source:
 {context}
