@@ -1,84 +1,78 @@
-# 🌌 Sōzō in Action: A Day in the Life
+# 🌌 Sōzō in Action — Real Workflow Example (Updated)
 
-Not sure how to actually use Sōzō?
-
-You don't need to be a programmer. Whether you're a student, developer, or researcher, Sōzō records actions so you never lose context.
-
-Here's how a typical day might look using Sōzō.
+This is how you actually use Sōzō in daily life.
 
 ---
 
-# 🌅 Morning — Quick Logging
+# 🌅 Morning — Start Fast
 
-Start your day by logging activities naturally.
+### Log your activity (natural language)
 
-### Smart Log a habit
-
-```bash
-sozo log "went for a 3 mile run and stretched"
+```
+sozo log "went for a 3km run and stretched"
 ```
 
-Sōzō uses AI to automatically extract:
+AI automatically extracts:
 
-* category
-* action
-* tags
+* category → health
+* value → ran and stretched
+* tags → fitness
 
 ---
 
-### Set a reminder
+### Add a reminder
 
-```bash
-sozo add work "email professor about project" --at "3pm" --remind
+```
+sozo add work "email professor about thesis" --at "3pm" --remind
 ```
 
 ---
 
-### Start the reminder watcher
+### Start reminder engine
 
-```bash
+```
 sozo kosmo
 ```
 
-Kosmo runs in the background and alerts you when reminders are due.
+This runs in the background and alerts you when events are due.
 
 ---
 
-# 🧠 Afternoon — Your Second Brain
+# 🧠 Afternoon — Build Your Second Brain
 
-### Create a quick note
+### Create a note
 
-```bash
-sozo note "Faceless Channel Ideas" -c brainstorm -t youtube
+```
+sozo note "Startup Ideas" -c ideas -t business
 ```
 
-This creates a Markdown file in your vault with YAML metadata.
+Opens your editor → write → save → auto-stored in vault.
 
 ---
 
-### AI Note Ingestion
+### Ingest messy notes using AI
 
-```bash
-sozo ingest messy_notes.txt "DSA Concepts" -c study -t python
+```
+sozo ingest raw.txt "Clean Notes" -c study -t ai
 ```
 
-AI formats messy notes into structured Markdown.
+AI converts raw text → structured Markdown.
 
 ---
 
-### Search your vault
+### Search your brain
 
-```bash
-sozo brain "binary tree"
+```
+sozo brain "vector database"
 ```
 
-Searches inside your Markdown notes.
+Searches inside all Markdown files.
 
 ---
 
-### View a Concept Node
+### Explore a concept
 
-```bash
+```
 sozo concept python
 ```
 
@@ -90,21 +84,19 @@ Shows:
 
 ---
 
-### Check file history
+### View file history
 
-```bash
+```
 sozo file services.py
 ```
 
-Shows all events related to that file.
-
 ---
 
-# 💻 Evening — Developer Workflow
+# 💻 Evening — Developer Mode
 
-### AI Auto Commit
+### Auto commit with AI
 
-```bash
+```
 sozo commit
 ```
 
@@ -112,38 +104,75 @@ Sōzō:
 
 * reads git diff
 * generates commit message
-* commits changes
+* commits
 * logs event
 
 ---
 
 ### Push changes
 
-```bash
+```
 sozo push
 ```
 
 ---
 
-# 🌙 Night — Review Your Day
+### Run git commands (tracked)
+
+```
+sozo git status
+sozo git pull
+```
+
+All actions are logged automatically.
+
+---
+
+# 🚀 Release Workflow
+
+### Create release
+
+```
+sozo release v1.0.0
+```
+
+Sōzō:
+
+* scans commits
+* generates release notes (AI)
+* creates git tag
+* pushes to GitHub
+* logs event
+
+---
+
+### Undo release
+
+```
+sozo unrelease v1.0.0
+```
+
+---
+
+# 🌙 Night — Reflect & Review
 
 ### Open dashboard
 
-```bash
+```
 sozo dash
 ```
 
-Displays:
+Shows:
 
-* activity stats
+* stats
 * today's actions
 * timeline preview
 
 ---
 
-### View weekly timeline
+### View timeline
 
-```bash
+```
 sozo timeline week
 ```
 
@@ -151,15 +180,23 @@ sozo timeline week
 
 ### Fix a mistake
 
-```bash
+```
 sozo edit 14 -v "updated description"
 ```
 
 ---
 
-### Export timeline
+### Delete wrong entry
 
-```bash
+```
+sozo delete 14
+```
+
+---
+
+### Export your timeline
+
+```
 sozo export -o timeline.md
 ```
 
@@ -167,24 +204,85 @@ sozo export -o timeline.md
 
 ### Visualize knowledge graph
 
-```bash
+```
 sozo graph --export
+```
+
+Open in:
+
+* GitHub
+* Obsidian
+* VS Code
+
+---
+
+# ⚡ Power Moves
+
+### Multi-log in one command
+
+```
+sozo log "fixed API bug" "optimized query" "pushed update"
 ```
 
 ---
 
-# 📊 Useful Commands
+### Link events together
 
-| Command             | Purpose                    |
-| ------------------- | -------------------------- |
-| `sozo stats`        | show activity statistics   |
-| `sozo today`        | show today's events        |
-| `sozo list`         | list all events            |
-| `sozo search QUERY` | search event database      |
-| `sozo delete ID`    | delete event               |
-| `sozo docs --sync`  | auto update docs using AI  |
-| `sozo git status`   | run git command and log it |
+```
+sozo add programming "refactored services layer" --relates-to 21
+```
 
 ---
 
-Sōzō quietly builds a **chronological map of your life** while you work.
+### Tag-based timeline
+
+```
+sozo timeline week --tag ai
+```
+
+---
+
+### Search everything
+
+```
+sozo search python
+```
+
+---
+
+# 🧠 Mental Model
+
+You are not writing notes.
+
+You are **recording actions**.
+
+Over time:
+
+* events → timeline
+* timeline → patterns
+* patterns → insight
+
+---
+
+# 🔥 End Result
+
+Sōzō becomes:
+
+* your memory
+* your progress tracker
+* your developer log
+* your second brain
+
+---
+
+# 🧩 Final Thought
+
+Use Sōzō like Git:
+
+You don’t log everything.
+
+You log **meaningful actions**.
+
+---
+
+👉 Build your timeline. One event at a time.

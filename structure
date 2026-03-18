@@ -1,20 +1,33 @@
 SOZO/
 │
-├ setup.py
-├ requirements.txt
-├ .gitignore
+├── README.md
+├── MANUAL.md
+├── EXAMPLE.md
+├── .gitignore
+├── requirements.txt
+├── setup.py
+├── .env                # (not committed)
 │
-└ sozo/
-   ├ cli/
-   │   ├ app.py
-   │   ├ commands.py
-   │   └ utils.py
-   │
-   ├ core/
-   │   ├ database.py
-   │   ├ repos.py
-   │   ├ services.py
-   │   ├ kosmo.py
-   │   └ remindr.py
-   │
-   └ main.py
+├── sozo/
+│   │
+│   ├── **init**.py
+│   │
+│   ├── main.py
+│   │
+│   ├── cli/
+│   │   ├── **init**.py
+│   │   ├── app.py
+│   │   ├── commands.py
+│   │   └── utils.py
+│   │
+│   ├── core/
+│   │   ├── **init**.py
+│   │   ├── config.py
+│   │   ├── database.py
+│   │   ├── repos.py
+│   │   ├── services.py
+│   │   ├── kosmo.py
+│   │   └── ai.py
+│   │
+│   
+│
