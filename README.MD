@@ -198,6 +198,22 @@ Or:
 sozo --help
 ```
 
+### Release
+
+Release a new version.
+
+```
+sozo release v1.0.0
+```
+
+### Unrelease
+
+Unrelease a version.
+
+```
+sozo unrelease v0.3.0
+```
+
 # 📦 Event Commands
 
 ### Add Event
