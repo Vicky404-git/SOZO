@@ -17,8 +17,12 @@ from sozo.core.ai import (
 
 def get_git_diff():
     try:
+        # 1. Check what files are staged, IGNORING massive machine-generated files
+        # The ':!*.lock' syntax is Git's magic way of saying "exclude this"
+        diff_cmd = ["git", "diff", "--cached", "--", ".", ":!*.lock", ":!*.csv", ":!*.json", ":!*.svg"]
+        
         result = subprocess.run(
-            ["git", "diff", "--cached"],
+            diff_cmd,
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -26,16 +30,19 @@ def get_git_diff():
 
         diff = result.stdout.strip()
 
+        # 2. If nothing is staged, add everything and try again
         if not diff:
             subprocess.run(["git", "add", "."])
             result = subprocess.run(
-                ["git", "diff", "--cached"],
+                diff_cmd,
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
             )
             diff = result.stdout.strip()
 
+        # 3. Get the list of ALL files being committed (including the lockfiles)
+        # We want the lockfiles to be committed, just not read by the AI
         file_result = subprocess.run(
             ["git", "diff", "--cached", "--name-only"],
             capture_output=True,
