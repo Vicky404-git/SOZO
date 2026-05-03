@@ -1,18 +1,21 @@
-# 🌌 Sōzō in Action — Real Workflow Example (Updated)
+# 🌌 Sōzō in Action — Real Workflow
 
-This is how you actually use Sōzō in daily life.
+This is how Sōzō fits into a real day.
+
+Not as a tool.
+As a **thinking system**.
 
 ---
 
-# 🌅 Morning — Start Fast
+# 🌅 Morning — Capture Reality
 
-### Log your activity (natural language)
+### Log what actually happened
 
 ```
 sozo log "went for a 3km run and stretched"
 ```
 
-AI automatically extracts:
+Sōzō extracts structure from chaos:
 
 * category → health
 * value → ran and stretched
@@ -20,7 +23,7 @@ AI automatically extracts:
 
 ---
 
-### Add a reminder
+### Set intent (only when needed)
 
 ```
 sozo add work "email professor about thesis" --at "3pm" --remind
@@ -28,73 +31,69 @@ sozo add work "email professor about thesis" --at "3pm" --remind
 
 ---
 
-### Start reminder engine
+### Start background awareness
 
 ```
 sozo kosmo
 ```
 
-This runs in the background and alerts you when events are due.
+Now your timeline is **alive**.
 
 ---
 
-# 🧠 Afternoon — Build Your Second Brain
+# 🧠 Afternoon — Build Thought → Structure
 
-### Create a note
+### Capture an idea
 
 ```
-sozo note "Startup Ideas" -c ideas -t business
+sozo note "AI Council System"
 ```
 
-Opens your editor → write → save → auto-stored in vault.
+You write freely.
+Sōzō stores it as structured memory.
 
 ---
 
-### Ingest messy notes using AI
+### Clean messy thinking
 
 ```
-sozo ingest raw.txt "Clean Notes" -c study -t ai
+sozo ingest raw.txt "Transformer Notes" -c study -t ai
 ```
 
-AI converts raw text → structured Markdown.
+Raw → readable → structured.
 
 ---
 
-### Search your brain
+### Search your thinking
 
 ```
 sozo brain "vector database"
 ```
 
-Searches inside all Markdown files.
+You don’t remember everything.
+Sōzō does.
 
 ---
 
-### Explore a concept
+### Connect concepts
 
 ```
-sozo concept python
+sozo concept ai
 ```
 
-Shows:
+Now you see:
 
 * related notes
-* related events
+* related actions
 * related projects
 
----
-
-### View file history
-
-```
-sozo file services.py
-```
+This is where thinking becomes **visible**.
 
 ---
 
-# 💻 Evening — Developer Mode
+# 💻 Evening — Build Mode
 
-### Auto commit with AI
+### Commit without thinking about commits
 
 ```
 sozo commit
@@ -102,10 +101,10 @@ sozo commit
 
 Sōzō:
 
-* reads git diff
-* generates commit message
+* reads diff
+* writes message
 * commits
-* logs event
+* logs your work
 
 ---
 
@@ -117,20 +116,18 @@ sozo push
 
 ---
 
-### Run git commands (tracked)
+### Track everything
 
 ```
 sozo git status
 sozo git pull
 ```
 
-All actions are logged automatically.
+Everything becomes part of your timeline.
 
 ---
 
-# 🚀 Release Workflow
-
-### Create release
+# 🚀 Release Flow
 
 ```
 sozo release v1.0.0
@@ -138,39 +135,27 @@ sozo release v1.0.0
 
 Sōzō:
 
-* scans commits
-* generates release notes (AI)
-* creates git tag
-* pushes to GitHub
-* logs event
+* understands your work
+* writes release notes
+* tags and pushes
+* logs the milestone
 
 ---
 
-### Undo release
+# 🌙 Night — Reflection Layer
 
-```
-sozo unrelease v1.0.0
-```
-
----
-
-# 🌙 Night — Reflect & Review
-
-### Open dashboard
+### Open command center
 
 ```
 sozo dash
 ```
 
-Shows:
-
-* stats
-* today's actions
-* timeline preview
+You don’t guess your day.
+You **see it**.
 
 ---
 
-### View timeline
+### View your timeline
 
 ```
 sozo timeline week
@@ -178,23 +163,16 @@ sozo timeline week
 
 ---
 
-### Fix a mistake
+### Fix or refine
 
 ```
 sozo edit 14 -v "updated description"
-```
-
----
-
-### Delete wrong entry
-
-```
 sozo delete 14
 ```
 
 ---
 
-### Export your timeline
+### Export your reality
 
 ```
 sozo export -o timeline.md
@@ -202,23 +180,17 @@ sozo export -o timeline.md
 
 ---
 
-### Visualize knowledge graph
+### Visualize thinking
 
 ```
 sozo graph --export
 ```
 
-Open in:
-
-* GitHub
-* Obsidian
-* VS Code
-
 ---
 
 # ⚡ Power Moves
 
-### Multi-log in one command
+### Multi-log
 
 ```
 sozo log "fixed API bug" "optimized query" "pushed update"
@@ -226,7 +198,7 @@ sozo log "fixed API bug" "optimized query" "pushed update"
 
 ---
 
-### Link events together
+### Link ideas & actions
 
 ```
 sozo add programming "refactored services layer" --relates-to 21
@@ -234,7 +206,7 @@ sozo add programming "refactored services layer" --relates-to 21
 
 ---
 
-### Tag-based timeline
+### Filter patterns
 
 ```
 sozo timeline week --tag ai
@@ -254,35 +226,32 @@ sozo search python
 
 You are not writing notes.
 
-You are **recording actions**.
+You are:
+
+* capturing reality
+* structuring thoughts
+* building a timeline
+* revealing patterns
+
+---
+
+# 🔥 What Sōzō Becomes
 
 Over time:
 
 * events → timeline
 * timeline → patterns
 * patterns → insight
+* insight → better decisions
 
 ---
 
-# 🔥 End Result
-
-Sōzō becomes:
-
-* your memory
-* your progress tracker
-* your developer log
-* your second brain
-
----
-
-# 🧩 Final Thought
-
-Use Sōzō like Git:
+# 🌒 Final Thought
 
 You don’t log everything.
 
-You log **meaningful actions**.
+You log what **matters enough to remember**.
 
----
+And Sōzō makes sure
+you never lose it again.
 
-👉 Build your timeline. One event at a time.

@@ -1,4 +1,4 @@
-# 🌌 Sōzō — User Manual (Updated)
+# 🌌 Sōzō — User Manual 
 
 Welcome to **Sōzō** — a local-first CLI system that turns your life into a **timeline of events**.
 
