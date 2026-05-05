@@ -49,7 +49,7 @@ def register_commands(app: typer.Typer):
             print(f"[red]Error:[/red] {e}")
             
     @app.command()
-    def edit(event_id: int, category: str = None, value: str = None, tags: list[str] = None, files: list[str] = None):
+    def edit(event_id: int, category: str = None, value: str = typer.Option(None, "--value", "-v"), tags: list[str] = None, files: list[str] = None):
         """Edit an existing event."""
         try:
             edit_event(event_id, category, value, tags, files)
@@ -58,7 +58,7 @@ def register_commands(app: typer.Typer):
             print(f"[red]Error:[/red] {e}")
 
     @app.command()
-    def export(tag: str = None, out: str = "timeline.md"):
+    def export(tag: str = None, out: str = typer.Option("timeline.md", "--out", "-o")):
         """Export timeline to markdown."""
         try:
             export_to_md(tag, out)

@@ -81,8 +81,8 @@ def edit_event(event_id, category=None, value=None, tags=None, files=None):
     
     new_cat = category if category else row[2]
     new_val = value if value else row[3]
-    new_tags = ",".join(tags) if tags else row[7]
-    new_files = ",".join(files) if files else row[8]
+    new_tags = ",".join(tags) if tags else row[5]   # SELECT * col 5 = tags
+    new_files = ",".join(files) if files else row[6] # SELECT * col 6 = files
     
     update_event(event_id, new_cat, new_val, new_tags, new_files)
 

@@ -14,7 +14,7 @@ def _client():
     return Groq(api_key=api_key)
 
 
-def _ai(prompt: str, *, model="llama-3.1-8b-instant", temp=0.3, tokens=1000, fmt=None):
+def _ai(prompt: str, *, model="llama-3.3-70b-versatile", temp=0.3, tokens=1000, fmt=None):
     """Generic LLM executor."""
     kwargs = {
         "messages": [{"role": "user", "content": prompt}],

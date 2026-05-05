@@ -1,22 +1,26 @@
 from sozo.core.database import get_connection
 
 def _run_query(query: str, params=(), fetch_all=False, fetch_one=False, commit=False):
-    """Master helper to eliminate SQLite boilerplate."""
+    """Master helper to eliminate SQLite boilerplate and prevent leaks."""
     conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(query, params)
-    
-    result = None
-    if fetch_all:
-        result = cursor.fetchall()
-    elif fetch_one:
-        result = cursor.fetchone()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, params)
         
-    if commit:
-        conn.commit()
-        
-    conn.close()
-    return result
+        result = None
+        if fetch_all:
+            result = cursor.fetchall()
+        elif fetch_one:
+            result = cursor.fetchone()
+            
+        if commit:
+            conn.commit()
+            
+        return result
+    finally:
+        conn.close()
+
+
 
 # --- REFACTORED COMMANDS ---
 
@@ -53,7 +57,9 @@ def fetch_file_history(filename):
     return _run_query("SELECT id, timestamp, category, value, remind, tags, files, relates_to FROM events WHERE files LIKE ? OR tags LIKE ? ORDER BY timestamp DESC", (search_term, search_term), fetch_all=True)
 
 def fetch_event_by_id(event_id):
-    return _run_query("SELECT * FROM events WHERE id = ?", (event_id,), fetch_one=True)
-
+    return _run_query(
+        "SELECT id, timestamp, category, value, remind, tags, files, relates_to FROM events WHERE id = ?",
+        (event_id,), fetch_one=True
+    )
 def update_event(event_id, category, value, tags, files):
     _run_query("UPDATE events SET category = ?, value = ?, tags = ?, files = ? WHERE id = ?", (category, value, tags, files, event_id), commit=True)
