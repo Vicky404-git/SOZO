@@ -31,6 +31,16 @@ def initialize_database():
         cursor.execute("ALTER TABLE events ADD COLUMN files TEXT DEFAULT ''")
     if "relates_to" not in columns:
         cursor.execute("ALTER TABLE events ADD COLUMN relates_to INTEGER DEFAULT NULL")
+        
+    # --- V2 TIMETABLE MIGRATIONS ---
+    if "duration" not in columns:
+        cursor.execute("ALTER TABLE events ADD COLUMN duration INTEGER DEFAULT NULL")
+    if "deadline" not in columns:
+        cursor.execute("ALTER TABLE events ADD COLUMN deadline TEXT DEFAULT NULL")
+    if "priority" not in columns:
+        cursor.execute("ALTER TABLE events ADD COLUMN priority INTEGER DEFAULT 2") # 1=High, 2=Med, 3=Low
+    if "scheduled_start" not in columns:
+        cursor.execute("ALTER TABLE events ADD COLUMN scheduled_start TEXT DEFAULT NULL")
 
     conn.commit()
     conn.close()

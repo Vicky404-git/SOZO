@@ -24,10 +24,12 @@ def _run_query(query: str, params=(), fetch_all=False, fetch_one=False, commit=F
 
 # --- REFACTORED COMMANDS ---
 
-def insert_event(timestamp, category, value, created_at, remind, tags, files, relates_to=None):
+def insert_event(timestamp, category, value, created_at, remind, tags, files, relates_to=None, duration=None, deadline=None, priority=2, scheduled_start=None):
     _run_query(
-        "INSERT INTO events (timestamp, category, value, created_at, remind, tags, files, relates_to) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        (timestamp, category, value, created_at, remind, tags, files, relates_to),
+        """INSERT INTO events 
+           (timestamp, category, value, created_at, remind, tags, files, relates_to, duration, deadline, priority, scheduled_start) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (timestamp, category, value, created_at, remind, tags, files, relates_to, duration, deadline, priority, scheduled_start),
         commit=True
     )
 
