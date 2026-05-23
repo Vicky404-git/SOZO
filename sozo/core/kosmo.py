@@ -42,28 +42,32 @@ def check_due_events():
     cursor = conn.cursor()
     now = datetime.now().isoformat()
 
+    # V2 UPGRADE: Check both explicit reminders AND auto-scheduled tasks
     cursor.execute("""
         SELECT id, category, value
         FROM events
-        WHERE timestamp <= ?
-        AND remind = 1
+        WHERE (
+            (timestamp <= ? AND remind = 1)
+            OR 
+            (scheduled_start <= ? AND scheduled_start IS NOT NULL)
+        )
         AND reminded = 0
-    """, (now,))
+    """, (now, now))
 
     rows = cursor.fetchall()
 
     for event_id, category, value in rows:
-        message = f"{category} → {value}"
+        message = f"[{category.upper()}] {value}"
         
         # Try to send to DaemonV
         if _send_to_daemonv(message):
             # Success! Tell the terminal it sent the popup
-            print(f"\n✨ Sent to Desktop: {message}")
+            print(f"\n✨ Auto-Schedule Prompt: {message}")
         else:
             # Failure! Fall back to a standard terminal reminder
             print(f"\n🔔 Terminal Reminder: {message}")
 
-        # Mark as reminded
+        # Mark as reminded so it doesn't spam you
         cursor.execute(
             "UPDATE events SET reminded = 1 WHERE id = ?",
             (event_id,)

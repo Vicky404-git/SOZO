@@ -45,7 +45,7 @@ def detect_project():
 # EVENT MANAGEMENT
 # --------------------------------------------------
 
-def add_event(category, value, at=None, remind=False, tags=None, files=None, relates_to=None):
+def add_event(category, value, at=None, remind=False, tags=None, files=None, relates_to=None, duration=None, deadline=None, priority=2):
     event_time = parse_datetime(at)
     now = datetime.now()
     tags_list = list(tags) if tags else []
@@ -57,9 +57,12 @@ def add_event(category, value, at=None, remind=False, tags=None, files=None, rel
     tags_str = ",".join(tags_list)
     files_str = ",".join(files) if files else ""
 
+    # Pass the new arguments down to repos.py!
+    # Note: scheduled_start is passed as None, since the AI scheduler will fill it in later.
     insert_event(
         event_time.isoformat(), category, value, now.isoformat(),
         int(remind), tags_str, files_str, relates_to,
+        duration, deadline, priority, None
     )
     return tags_list
 

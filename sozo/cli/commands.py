@@ -37,18 +37,33 @@ def _get_note_path(filename: str) -> Path:
 def register_commands(app: typer.Typer):
 
     @app.command()
-    def add(category: str, value: list[str], at: str = None, remind: bool = False, tags: list[str] = None, files: list[str] = None, relates_to: int = None):
+    def add(
+        category: str, 
+        value: list[str], 
+        at: str = None, 
+        remind: bool = False, 
+        tags: list[str] = None, 
+        files: list[str] = None, 
+        relates_to: int = None,
+        duration: int = typer.Option(None, "--duration", "-d", help="Task duration in minutes"),
+        deadline: str = typer.Option(None, "--deadline", help="Strict deadline for the task"),
+        priority: int = typer.Option(2, "--priority", "-p", help="Priority: 1=High, 2=Medium, 3=Low")
+    ):
         """Manually add a structured event."""
         full_value = " ".join(value)
         try:
-            final_tags = add_event(category, full_value, at, remind, tags, files, relates_to)
+            final_tags = add_event(category, full_value, at, remind, tags, files, relates_to, duration, deadline, priority)
+            
             tag_str = f" [cyan]#{', #'.join(final_tags)}[/cyan]" if final_tags else ""
             file_str = f" 📎 [dim]{', '.join(files)}[/dim]" if files else ""
             rel_str = f" 🔗 [magenta]Linked to #{relates_to}[/magenta]" if relates_to else ""
-            print(f"[green]✔ Saved:[/green] {category} → {full_value}{tag_str}{file_str}{rel_str}")
-        except Exception as e:
-            print(f"[red]Error:[/red] {e}")
+            dur_str = f" ⏳ [yellow]{duration}m[/yellow]" if duration else ""
+            pri_str = f" ⚡ [red]P{priority}[/red]" if priority != 2 else ""
             
+            print(f"[green]✔ Saved:[/green] {category} → {full_value}{tag_str}{file_str}{rel_str}{dur_str}{pri_str}")
+        except Exception as e:
+            print(f"[red]Error:[/red] {e}")            
+
     @app.command()
     def edit(event_id: int, category: str = None, value: str = typer.Option(None, "--value", "-v"), tags: list[str] = None, files: list[str] = None):
         """Edit an existing event."""
