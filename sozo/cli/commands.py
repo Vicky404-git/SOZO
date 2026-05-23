@@ -8,6 +8,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 from rich.markdown import Markdown
 
+from sozo.core.scheduler import auto_schedule_tasks
 from sozo.core.config import VAULT_PATH
 from sozo.core.kosmo import start_kosmo
 from sozo.core.services import (
@@ -245,3 +246,31 @@ def register_commands(app: typer.Typer):
             return
         print("[green]Opening MANUAL.md...[/green]")
         open_in_editor(manual_path)
+
+
+    @app.command()
+    def schedule():
+        """Run the AI Constraint Engine to slot tasks into working hours."""
+        import datetime
+        try:
+            with console.status("[bold cyan]⚙️ Running Sōzō Constraint Engine...[/bold cyan]", spinner="bouncingBar"):
+                results = auto_schedule_tasks()
+            
+            if not results:
+                print("[green]✔ Schedule is already fully optimized. No pending tasks found.[/green]")
+                return
+                
+            print("\n[bold cyan]📅 Sōzō Timetable Generated[/bold cyan]\n")
+            
+            for value, start_iso, warning in results:
+                # Format the ISO time to something readable like "May 24 @ 09:00 AM"
+                dt = datetime.datetime.fromisoformat(start_iso)
+                time_str = dt.strftime('%b %d @ %I:%M %p')
+                
+                # Highlight if it breaches the deadline
+                warn_str = " [red]⚠️ DEADLINE RISK[/red]" if warning else ""
+                
+                print(f"  [dim][{time_str}][/dim] [green]Slot Assigned:[/green] {value}{warn_str}")
+                
+        except Exception as e:
+            print(f"[red]Scheduler Error:[/red] {e}")
