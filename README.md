@@ -1,6 +1,6 @@
-# Sōzō — Thought → Structure
+# 🌌 Sōzō — Thought → Structure
 
-> A local-first CLI system for turning **raw thoughts into structured reality**.
+> A local-first CLI system for turning raw thoughts, actions, and ideas into structured knowledge.
 
 ![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -10,67 +10,88 @@
 
 ---
 
-## 🌘 What is Sōzō?
+# 🧠 What is Sōzō?
 
-Sōzō (創造) means **creation**.
+Sōzō (創造) means:
 
-This is not a note-taking app.
-Not a task manager.
-Not a productivity dashboard.
+> creation  
+> imagination  
+> bringing ideas into reality
 
-Most tools store information.
+Sōzō is not:
+- a productivity app
+- a task manager
+- a notes app
+- a self-improvement tracker
 
-**Sōzō transforms thinking.**
+Most software stores information.
 
----
-
-## 🧠 Core Philosophy
-
-> Thoughts are chaotic.
-> Clarity must be forced.
-
-Sōzō treats life as **events + ideas + structure**.
-
-Instead of writing long notes, you:
-
-* log actions
-* capture intent
-* build structured knowledge over time
-
-Think of it as:
-
-> **Git for your life + an idea refinery engine**
+Sōzō structures thought.
 
 ---
 
-## ⚡ Core Concepts
+# 🌘 Core Philosophy
 
-### 1. Events (Reality Layer)
+> Thoughts are chaotic.  
+> Clarity must be created.
 
-Everything you do becomes an **event**.
+Sōzō helps you:
+- capture meaningful actions
+- preserve important thoughts
+- connect ideas together
+- build a searchable memory system
 
-```
-sozo add programming "built CLI engine"
-```
+Instead of managing pages and folders,
+you build a living timeline of:
+- work
+- learning
+- ideas
+- projects
+- reflections
 
-Over time, this creates a **timeline of actual work** — not plans.
+Think of it like:
 
----
-
-### 2. Vault (Thought Layer)
-
-Write distraction-free notes:
-
-```
-sozo note "Idea: AI Council"
-```
-
-Stored as clean Markdown with metadata.
-Works seamlessly with tools like Obsidian.
+> Git for your thinking.
 
 ---
 
-### 3. Concept Engine (Connection Layer)
+# ⚡ Core Systems
+
+## 🧾 Event System
+
+Everything becomes an event.
+
+```
+sozo add programming "built markdown parser"
+```
+
+
+Over time:
+
+```text
+events → timeline → patterns → insight
+```
+
+---
+
+## 🧠 Vault System
+
+Create distraction-free notes directly from terminal.
+
+```
+sozo note "AI Council Idea"
+```
+
+Notes are:
+
+* stored locally
+* markdown-based
+* YAML powered
+* Obsidian compatible
+
+---
+
+## 🌌 Concept Engine
 
 ```
 sozo concept ai
@@ -78,40 +99,57 @@ sozo concept ai
 
 Unifies:
 
-* events
 * notes
-* projects
+* events
+* related ideas
 
-Into a single **concept node**.
-
----
-
-### 4. AI Layer (Optional)
-
-Sōzō can:
-
-* structure messy text
-* generate commit messages
-* convert thoughts → markdown
-* parse natural language logs
-
-But AI is **assistive, not central**.
+Into a single concept node.
 
 ---
 
-## 🚀 Features
-
-### 🧾 Event Logging
-
-Track real actions instead of intentions.
+## 🔍 Brain Search
 
 ```
-sozo add study "read AI paper" --tag ai
+sozo brain "vector database"
+```
+
+Search your entire vault instantly.
+
+---
+
+## 🌐 Knowledge Graph
+
+```
+sozo graph
+```
+
+
+Visualize relationships between thoughts.
+
+Export Mermaid graph:
+
+```
+sozo graph --export
 ```
 
 ---
 
-### 🧠 Natural Language Logging
+## 🤖 AI Assistance
+
+AI in Sōzō is assistive — not central.
+
+It helps:
+
+* structure raw notes
+* parse natural language
+* clean messy thoughts
+* transform text into readable markdown
+
+---
+
+# 🚀 Features
+
+## Smart Logging
 
 ```
 sozo log "studied transformers for 2 hours"
@@ -120,238 +158,268 @@ sozo log "studied transformers for 2 hours"
 AI extracts:
 
 * category
-* structured action
+* action
 * tags
 
 ---
 
-### 📚 Knowledge Vault
-
-```
-sozo note "Neural Networks" -c study -t ai
-```
-
-* Markdown storage
-* YAML metadata
-* Obsidian-compatible
-
----
-
-### 🔍 Deep Search
-
-```
-sozo brain "architecture"
-```
-
-Search across your entire vault.
-
----
-
-### 🌌 Knowledge Graph
-
-```
-sozo graph
-```
-
-Visualize connections between notes.
-
-Export:
-
-```
-sozo graph --export
-```
-
----
-
-### 📊 Command Center
-
-```
-sozo dash
-```
-
-Terminal dashboard showing:
-
-* stats
-* today’s actions
-* recent timeline
-
----
-
-### 📅 Timeline System
+## Timeline View
 
 ```
 sozo timeline
+sozo timeline week
 ```
 
 Filter:
 
 ```
-sozo timeline week --tag python
+sozo timeline month --tag ai
 ```
 
 ---
 
-### 🧬 Concept Engine
+## Dashboard
 
 ```
-sozo concept startup
+sozo dash
 ```
 
-Builds a unified view of:
+Shows:
 
-* notes
-* events
-* projects
+* activity stats
+* today's actions
+* timeline preview
 
 ---
 
-### 🤖 AI Tools
+## Notes
 
-#### Smart Commit
-
-```
-sozo commit
-```
-
-#### Auto Docs
+### Create
 
 ```
-sozo docs --sync
+sozo note "Startup Ideas"
 ```
 
-#### AI Ingestion
+### Read
 
 ```
-sozo ingest notes.txt "Lecture"
+sozo read startup
+```
+
+### Rewrite
+
+```
+sozo rewrite startup
+```
+
+### List Notes
+
+```
+sozo notes
 ```
 
 ---
 
-### 🔧 Dev Integration
+## AI Ingestion
 
-* Git wrapper (`sozo git`)
-* Release system (`sozo release`)
-* Auto logging of dev actions
+Convert raw text into structured markdown.
+
+```
+sozo ingest raw.txt "Clean Notes"
+```
 
 ---
 
-### ⏰ Kosmo (Daemon Engine)
+## File History
+
+```bash
+sozo file services.py
+```
+
+---
+
+## Export Timeline
+
+```
+sozo export -o timeline.md
+```
+
+---
+
+## Reminder Engine — Kosmo
 
 ```
 sozo kosmo
 ```
 
-Background reminder system.
+Background event reminder system.
 
 ---
 
-## 🧠 The Hidden Layer (Your Direction)
+# 🧩 Example Workflow
 
-Sōzō is evolving into:
+Morning:
 
-> A system that converts **ideas → structured blueprints**
+```
+sozo log "went for a run"
+```
 
-Future direction includes:
+Afternoon:
 
-* idea refinement engine
-* thought auditing
-* idea evolution tracking
-* pattern detection
+```
+sozo note "Research Ideas"
+```
 
-This is not just logging anymore.
+Night:
+
+```
+sozo timeline week
+```
+
+Over time,
+Sōzō becomes:
+
+* your memory
+* your second brain
+* your idea archive
+* your reflection system
 
 ---
 
-## 🛠 Installation
+# 🛠 Installation
 
-```bash
+## Clone Repository
+
+```
 git clone https://github.com/Vicky404-git/SOZO.git
 cd SOZO
+```
 
+---
+
+## Create Virtual Environment
+
+```
 python -m venv sozoenv
-source sozoenv/bin/activate   # or Windows equivalent
+```
 
+Linux/macOS:
+
+```
+source sozoenv/bin/activate
+```
+
+Windows:
+
+```
+sozoenv\Scripts\activate
+```
+
+---
+
+## Install Dependencies
+
+```
 pip install -r requirements.txt
 pip install -e .
 ```
 
 ---
 
-## 🔑 AI Setup
+# 🔑 AI Setup
 
-Create `.env`:
+Create `.env` in root directory:
 
+```env
+GROQ_API_KEY=your_api_key
 ```
-GROQ_API_KEY=your_key_here
-```
 
-Used for:
+Required for:
 
-* log
-* commit
-* ingest
-* docs
+* `sozo log`
+* `sozo ingest`
 
 ---
 
-## 🏗 Architecture
+# 🏗 Architecture
 
-```
-CLI (Typer)
-   ↓
+```text
+CLI
+ ↓
 Commands
-   ↓
+ ↓
 Services
-   ↓
-Repository
-   ↓
-SQLite
+ ↓
+Repository Layer
+ ↓
+SQLite Database
 ```
 
-Local-first. No cloud dependency.
+Local-first by design.
+
+No cloud dependency.
+
+Your data stays yours.
 
 ---
 
-## 🗄 Database
+# 🗄 Database
 
-Single table: `events`
+SQLite table: `events`
 
 Tracks:
 
-* time
-* category
-* value
+* timestamps
+* categories
 * tags
-* file links
+* linked files
 * relations
 
 ---
 
-## 🗺 Roadmap
+# 🗺 Roadmap
 
-* Idea Refinery Engine (Sōzō Core)
-* Cycle Intelligence (Sōsei) (Probably/ or another repo )
-* Semantic Search (FAISS)
-* Full Knowledge Graph
-* VS Code integration (probably)
+## Sōzō v2
+
+Planned systems:
+
+* Idea Refinery Engine
+* Thought Structuring AI
+* Semantic Search
+* Pattern Detection
+* Idea Evolution Tracking
+* Reflection Layer
 
 ---
 
-## 👤 Author
+# 🌒 Ecosystem
+
+Sōzō is focused on:
+
+> thought + structure + memory
+
+Developer tooling is being moved into a separate experimental project:
+
+---
+
+# 👤 Author
 
 **Vicky404**
 
 GitHub:
-https://github.com/Vicky404-git
+[https://github.com/Vicky404-git](https://github.com/Vicky404-git)
 
 ---
 
-## 🌒 Final Note
+# 🌌 Final Thought
 
-Sōzō is not about productivity.
+You do not need to remember everything.
 
-It’s about:
+You only need a system
+that helps you reconnect the dots later.
 
-> Understanding what you actually do,
-> and turning thought into something real.
+Sōzō exists for that.
+
+```
+```
 
