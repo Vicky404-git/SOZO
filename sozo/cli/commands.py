@@ -8,8 +8,8 @@ from rich.prompt import Prompt
 from rich.table import Table
 from rich.markdown import Markdown
 
-from sozo.core.scheduler import auto_schedule_tasks
-from sozo.core.config import VAULT_PATH
+from sozo.core.kosmo import auto_schedule_tasks
+from sozo.core.runtime import VAULT_PATH
 from sozo.core.kosmo import start_kosmo
 from sozo.core.services import (
     add_event, edit_event, list_events, remove_event, show_today,

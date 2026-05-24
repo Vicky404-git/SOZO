@@ -190,7 +190,7 @@ def display_dashboard(stats, today_events, timeline_grouped):
     console.print(layout)
     
 def display_concept(keyword, data):
-    from sozo.core.config import VAULT_PATH
+    from sozo.core.runtime import VAULT_PATH
     
     if not data["events"] and not data["projects"] and not data["notes"]:
         show_empty(f"No connections found for concept: '{keyword}'")

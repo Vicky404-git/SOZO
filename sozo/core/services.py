@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
-from sozo.core.config import VAULT_PATH
+from sozo.core.runtime import VAULT_PATH
 import dateparser
 
 from sozo.core.repos import (

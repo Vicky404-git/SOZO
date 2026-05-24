@@ -1,7 +1,7 @@
 import json
 import time
 from groq import Groq
-from sozo.core.config import get_groq_api_key
+from sozo.core.runtime import get_groq_api_key
 
 # ---------- Core Client ----------
 
