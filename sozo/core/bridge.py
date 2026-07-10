@@ -1,4 +1,5 @@
 import os
+import asyncio
 from sozo.core.runtime import VAULT_PATH
 import html
 from telegram import Update
@@ -55,8 +56,9 @@ async def handle_read(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Please provide a note name to read. \nUsage: /read projects")
         return
         
-    # Search for the note in the vault
+    from sozo.core.runtime import VAULT_PATH
     found = list(VAULT_PATH.rglob(f"*{query}*.md"))
+    
     if not found:
         await update.message.reply_text(f"✖ Could not find any note matching '{query}'.")
         return
@@ -66,14 +68,21 @@ async def handle_read(update: Update, context: ContextTypes.DEFAULT_TYPE):
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
             
-        # Telegram has a 4096 character limit per message
-        if len(content) > 4000:
-            content = content[:4000] + "\n\n... [Note truncated due to Telegram size limits]"
-            
-        # Send without parse_mode so Markdown characters don't break the bot
-        reply = f"📄 Reading: {filepath.name}\n{'-'*30}\n{content}"
-        await update.message.reply_text(reply)
+        reply_header = f"📄 Reading: {filepath.name}\n{'-'*30}\n"
+        full_text = reply_header + content
         
+        # Telegram limit is 4096. We slice at 4000 to be perfectly safe.
+        chunk_size = 4000
+        chunks = [full_text[i:i+chunk_size] for i in range(0, len(full_text), chunk_size)]
+        
+        # Send each chunk as a separate message
+        for i, chunk in enumerate(chunks):
+            await update.message.reply_text(chunk)
+            
+            # If there's more than one chunk, pause for half a second to prevent rate-limiting
+            if i < len(chunks) - 1:
+                await asyncio.sleep(0.5) 
+                
     except Exception as e:
         await update.message.reply_text(f"✖ Error reading note: {e}")
 
