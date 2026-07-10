@@ -37,6 +37,15 @@ def _get_note_path(filename: str) -> Path:
 def register_commands(app: typer.Typer):
 
     @app.command()
+    def bridge(platform: str = "telegram"):
+        """Launch the messaging intake bridge for remote management."""
+        if platform == "telegram":
+            from sozo.core.bridge import start_bridge
+            start_bridge()
+        else:
+            print(f"[yellow]Platform '{platform}' is not supported yet.[/yellow]")
+
+    @app.command()
     def add(
         category: str, 
         value: list[str], 
