@@ -1,10 +1,10 @@
-import os
+import subprocess
 import time
+import sys
 
 def run_test():
     print("🚀 STARTING SŌZŌ SYSTEM DIAGNOSTICS...\n")
     
-    # 1. The Commands to test automatically
     commands = [
         ("1. ADD EVENT", 'sozo add test "Running automated system diagnostics" -t debug,qa -f qa_test.py'),
         ("2. LIST TODAY", 'sozo today'),
@@ -24,19 +24,18 @@ def run_test():
         print(f"💻 RUNNING: {cmd}")
         print(f"{'-'*50}\n")
         
-        # Execute the command directly in the terminal
-        os.system(cmd)
+        # Use subprocess and check for failure
+        result = subprocess.run(cmd, shell=True)
         
-        # Pause so you can visually inspect the output
+        if result.returncode != 0:
+            print(f"\n❌ FATAL ERROR: Command '{name}' failed!")
+            sys.exit(1)  # This tells GitHub Actions to FAIL the workflow
+        
         time.sleep(2)
 
     print("\n" + "="*50)
     print("✅ AUTOMATED DIAGNOSTICS COMPLETE!")
     print("="*50)
-    print("\n⚠️ NOTE: Please test the following commands manually:")
-    print("  1. 'sozo note \"Test\"' (Opens your text editor)")
-    print("  2. 'sozo commit' (Uses Groq API tokens)")
-    print("  3. 'sozo kosmo' (Runs an infinite background loop)")
 
 if __name__ == "__main__":
     run_test()

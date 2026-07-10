@@ -1,9 +1,22 @@
 [project]
 name = "sozo"
-version = "0.1.0"
-description = "Add your description here"
+version = "1.0.0"
+description = "Sōzō — Thought → Structure. A local-first CLI system."
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "dateparser>=1.1.0",
+    "setuptools",
+    "groq>=0.4.2",
+    "python-dotenv>=1.0.0",
     "python-telegram-bot>=22.8",
 ]
+
+[project.scripts]
+sozo = "sozo.main:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

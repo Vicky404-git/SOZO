@@ -3,12 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environments
+# Environments
+.env
+.venv/
 venv/
 env/
-.env/
 sozoenv/
-.env
 
 # Packaging
 sozo.egg-info/
@@ -16,19 +16,18 @@ sozo.egg-info/
 build/
 dist/
 
-# Databases
+# Databases & Local Data
 *.sqlite3
 *.db
 data/
 .sozo/
 notes.txt
 
-# OS junk
+# OS Junk
 .DS_Store
 Thumbs.db
 
-# Sōzō Exports
-# Ignore any exported timelines to keep personal data off GitHub
+# Sōzō Exports (Ignore timeline exports to keep personal data off GitHub)
 *.md
 !README.md
 !MANUAL.md
