@@ -6,14 +6,14 @@ def run_test():
     print("🚀 STARTING SŌZŌ SYSTEM DIAGNOSTICS...\n")
     
     commands = [
-        ("1. ADD EVENT", 'sozo add test "Running automated system diagnostics" -t debug,qa -f qa_test.py'),
+        ("1. ADD EVENT", 'sozo add test "Running automated system diagnostics" --tags debug,qa --files qa_test.py'),
         ("2. LIST TODAY", 'sozo today'),
         ("3. SEARCH", 'sozo search "diagnostics"'),
-        ("4. TIMELINE", 'sozo timeline week -t qa'),
+        ("4. TIMELINE", 'sozo timeline week --tag qa'),
         ("5. STATS", 'sozo stats'),
         ("6. FILE HISTORY", 'sozo file "qa_test.py"'),
         ("7. DASHBOARD", 'sozo dash'),
-        ("8. EXPORT", 'sozo export -t qa -o qa_export.md'),
+        ("8. EXPORT", 'sozo export --tag qa --out qa_export.md'),
         ("9. ASCII GRAPH", 'sozo graph'),
         ("10. 2D GRAPH EXPORT", 'sozo graph --export')
     ]
