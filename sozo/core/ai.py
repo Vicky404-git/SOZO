@@ -174,3 +174,25 @@ Commits:
 {commits}
 """
     return _ai(prompt, tokens=1000)
+
+# ---------- Reflection Layer ----------
+
+def generate_reflection(events_text: str, period: str = "week") -> str:
+    prompt = f"""
+    You are Sōzō's Reflection Engine. 
+    Analyze the user's raw event logs from the past {period}.
+    
+    Write a concise, insightful Markdown summary of their activity.
+    Include:
+    1. A short executive summary of their week.
+    2. 🏆 Key achievements or focuses.
+    3. 🔍 Patterns detected (e.g., "You spent a lot of time on X").
+    4. 💡 A thoughtful suggestion for next week.
+    
+    Output ONLY valid Markdown. No conversational filler.
+    
+    Logs:
+    {events_text}
+    """
+    
+    return _ai(prompt, tokens=2000)

@@ -8,6 +8,8 @@ from rich.prompt import Prompt
 from rich.table import Table
 from rich.markdown import Markdown
 
+from sozo.core.ai import *
+
 from sozo.core.kosmo import auto_schedule_tasks
 from sozo.core.runtime import VAULT_PATH
 from sozo.core.kosmo import start_kosmo
@@ -256,6 +258,45 @@ def register_commands(app: typer.Typer):
         except Exception as e:
             print(f"[red]Error:[/red] {e}")
             
+    
+    @app.command()
+    def reflect(period: str = typer.Option("week", "--period", "-p", help="Time period to reflect on (week/month)")):
+        """AI generates a reflection note based on your recent timeline."""
+        from sozo.core.ai import generate_reflection
+        import datetime
+        
+        try:
+            with console.status(f"[bold magenta]🧠 Analyzing your {period}'s timeline...[/bold magenta]", spinner="point"):
+                # 1. Grab the timeline data
+                grouped_events = get_timeline(period)
+                if not grouped_events:
+                    print(f"[yellow]No events found for the past {period}. Log more things![/yellow]")
+                    return
+                
+                # 2. Format it into plain text for the AI
+                raw_log_text = ""
+                for date_str, events in grouped_events.items():
+                    raw_log_text += f"\nDate: {date_str}\n"
+                    for e in events:
+                        # category -> value #tags
+                        raw_log_text += f"- {e[2]}: {e[3]} ({e[5]})\n"
+                
+                # 3. Generate the reflection
+                reflection_md = generate_reflection(raw_log_text, period)
+                
+                # 4. Save it securely to the vault
+                title = f"{period.capitalize()}ly Reflection {datetime.datetime.now().strftime('%b %d')}"
+                filepath, _ = create_note(title, "reflection", ["review", "reflection"], reflection_md)
+                
+            print(f"[green]✔ Reflection generated and saved to vault![/green]")
+            
+            # Ask if they want to read it right now
+            if typer.confirm("Do you want to read your reflection now?"):
+                open_in_editor(filepath)
+                
+        except Exception as e:
+            print(f"[red]Error generating reflection:[/red] {e}")
+
     @app.command()
     def kosmo():
         """Start the background reminder engine."""
@@ -298,3 +339,5 @@ def register_commands(app: typer.Typer):
                 
         except Exception as e:
             print(f"[red]Scheduler Error:[/red] {e}")
+
+
