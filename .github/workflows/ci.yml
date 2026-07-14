@@ -23,7 +23,11 @@ jobs:
         run: uv python install 3.12
 
       - name: Install Sōzō
-        run: uv pip install --system -e .
+        run: |
+          uv venv
+          uv pip install -e .
 
       - name: Run Automated Tests
-        run: python test.py
+        run: |
+          source .venv/bin/activate
+          python test.py
