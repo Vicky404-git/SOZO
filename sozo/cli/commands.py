@@ -235,8 +235,34 @@ def register_commands(app: typer.Typer):
             print(f"[red]Failed to ingest file:[/red] {e}")
 
     @app.command()
-    def graph(export: bool = False):
-        """Visualize the knowledge graph of your notes."""
+    def graph(
+        export: bool = False, 
+        lineage_id: int = typer.Option(None, "--lineage", "-l", help="Visualize event lineage for a specific ID")
+    ):
+        """Visualize the knowledge graph of your notes or the lineage of an event."""
+        from rich.tree import Tree
+        from sozo.core.repos import _run_query
+        
+        # 1. EVOLUTION/LINEAGE MODE
+        if lineage_id:
+            def build_tree(eid, tree):
+                # Fetch children that relate to this event
+                children = _run_query("SELECT id, category, value FROM events WHERE relates_to = ?", (eid,), fetch_all=True)
+                for cid, cat, val in children:
+                    branch = tree.add(f"[green]#{cid}[/green] [magenta]{cat}[/magenta]: {val}")
+                    build_tree(cid, branch)
+
+            root = _run_query("SELECT category, value FROM events WHERE id = ?", (lineage_id,), fetch_one=True)
+            if not root:
+                print(f"[red]Event {lineage_id} not found.[/red]")
+                return
+                
+            tree = Tree(f"🪐 [bold blue]Lineage of #{lineage_id}[/bold blue] ({root[0]}: {root[1]})")
+            build_tree(lineage_id, tree)
+            console.print(tree)
+            return
+
+        # 2. STANDARD KNOWLEDGE GRAPH MODE
         graph_data = build_knowledge_graph()
         if export:
             export_mermaid_graph(graph_data)
@@ -340,4 +366,4 @@ def register_commands(app: typer.Typer):
         except Exception as e:
             print(f"[red]Scheduler Error:[/red] {e}")
 
-
+    
