@@ -151,7 +151,7 @@ Current {name}:
 
     return _ai(
         prompt,
-        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        model="qwen/qwen3.6-27b",
         temp=0.1,
         tokens=3500,
     )
