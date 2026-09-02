@@ -100,7 +100,7 @@ Diff:
 Output ONLY the commit message.
 """
 
-    return _ai(prompt, model="openai/gpt-oss-20b", tokens=50)
+    return _ai(prompt, model="qwen/qwen3.8-27b", tokens=50)
 
 
 # ---------- Natural Language Event Parser ----------
