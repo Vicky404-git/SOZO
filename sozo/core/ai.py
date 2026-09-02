@@ -100,7 +100,7 @@ Diff:
 Output ONLY the commit message.
 """
 
-    return _ai(prompt, model="llama-3.1-8b-instant", tokens=50)
+    return _ai(prompt, model="openai/gpt-oss-20b", tokens=50)
 
 
 # ---------- Natural Language Event Parser ----------
