@@ -14,7 +14,7 @@ def run_test():
         ("5. STATS", 'sozo stats'),
         ("6. FILE HISTORY", 'sozo file "qa_test.py"'),
         ("7. DASHBOARD", 'sozo dash'),
-        ("8. EXPORT TIMELINE", 'sozo export --tag qa --out qa_export.md'),
+        ("8. EXPORT TIMELINE", 'sozo export --tag qa --out /tmp/sozo-qa-export.md'),
     ]
 
     # 2. VAULT & SECOND BRAIN
