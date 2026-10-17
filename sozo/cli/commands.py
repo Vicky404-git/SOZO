@@ -156,7 +156,8 @@ def register_commands(app: typer.Typer):
 
     @app.command()
     def standup():
-        
+       """Show a placeholder until the standup feature is implemented."""
+       print("Standup command is not implemented yet.")
     @app.command()
     def note(title: str = None, category: str = None, tags: list[str] = None):
         """Open a distraction-free notebook directly in the terminal."""
