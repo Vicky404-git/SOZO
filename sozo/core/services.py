@@ -189,7 +189,8 @@ tags: {yaml_tags}
         f.write(yaml_frontmatter)
 
     insert_event(datetime.now().isoformat(), category, f"{action_desc}: {title}",
-                 datetime.now().isoformat(), 0, ",".join(tags_list), f"vault/{subfolder}/{filename}", None)
+             datetime.now().isoformat(), 0, ",".join(tags_list), f"vault/{subfolder}/{filename}", None,
+             None, None, 2, None)
     return filepath, tags_list
 
 
@@ -259,6 +260,9 @@ def build_knowledge_graph():
             continue
 
     return graph
+
+
+
 
 # --------------------------------------------------
 # CONCEPT ENGINE

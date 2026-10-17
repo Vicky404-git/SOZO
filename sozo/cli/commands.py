@@ -153,6 +153,9 @@ def register_commands(app: typer.Typer):
     def dash():
         """Open your personal command center dashboard."""
         display_dashboard(get_stats(), show_today(), get_timeline("week"))
+
+    @app.command()
+    def standup():
         
     @app.command()
     def note(title: str = None, category: str = None, tags: list[str] = None):
@@ -290,7 +293,7 @@ def register_commands(app: typer.Typer):
         """AI generates a reflection note based on your recent timeline."""
         from sozo.core.ai import generate_reflection
         import datetime
-        
+        events = get_timeline(period)
         try:
             with console.status(f"[bold magenta]🧠 Analyzing your {period}'s timeline...[/bold magenta]", spinner="point"):
                 # 1. Grab the timeline data
